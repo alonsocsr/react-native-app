@@ -12,7 +12,7 @@ const ModalView = ({ children, nombre, onSubmit, cancelable, visible = false, on
         >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Title style={styles.modalText}>{nombre}</Title>
+                    <Title className="font-fregular" style={styles.modalText}>{nombre}</Title>
                     <View>
                         {children}
                     </View>
@@ -20,12 +20,12 @@ const ModalView = ({ children, nombre, onSubmit, cancelable, visible = false, on
                         {cancelable && (<TouchableOpacity
                             style={{ ...styles.button, backgroundColor: 'white' }}
                             onPress={onDismiss}>
-                            <Text style={[styles.textStyle, { color: '#f44' }]}>Cancelar</Text>
+                            <Text className="font-fregular" style={[styles.textStyle, { color: '#f44' }]}>Cancelar</Text>
                         </TouchableOpacity>)}
                         {onSubmit && (<TouchableOpacity
                             style={styles.button}
                             onPress={onSubmit}>
-                            <Text style={styles.textStyle}>{submitText}</Text>
+                            <Text className="font-fregular" style={styles.textStyle}>{submitText}</Text>
                         </TouchableOpacity>)}
                     </View>
                 </View>
