@@ -1,0 +1,30 @@
+{
+  "categorias": [
+    {
+      "id": "1",
+      "nombre": "Ropas"
+    },
+    {
+      "id": "a859",
+      "nombre": "Bebidas"
+    },
+    {
+      "id": "4caa",
+      "nombre": "Embutidos "
+    }
+  ],
+  "productos": [
+    {
+      "id": "1",
+      "nombre": "Remera",
+      "idCategoria": "1",
+      "precioVenta": "300"
+    },
+    {
+      "id": "2",
+      "nombre": "Cafe",
+      "postId": "2",
+      "precioVenta": "300"
+    }
+  ]
+}
