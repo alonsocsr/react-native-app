@@ -1,0 +1,34 @@
+{
+  "categorias": [
+    {
+      "id": "1",
+      "nombre": "Ropas"
+    },
+    {
+      "id": "2",
+      "nombre": "Alimentos"
+    },
+    {
+      "id": "a859",
+      "nombre": "Bebidas"
+    },
+    {
+      "id": "0f22",
+      "nombre": "Nueva"
+    }
+  ],
+  "productos": [
+    {
+      "id": "1",
+      "nombre": "Remera",
+      "idCategoria": "1",
+      "precioVenta": "300"
+    },
+    {
+      "id": "2",
+      "nombre": "Cafe",
+      "postId": "2",
+      "precioVenta": "300"
+    }
+  ]
+}
