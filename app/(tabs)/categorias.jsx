@@ -2,10 +2,10 @@ import { StatusBar, } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, SafeAreaView, Platform } from 'react-native';
 import { Surface, Title, TextInput } from 'react-native-paper';
-import ModalView from '../components/ModalView';
-import CrearView from '../components/CrearView';
+import ModalView from './ModalView';
+import CrearView from './CrearView';
 
-const Categoria = () => {
+const Categorias = () => {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [nombre, setNombre] = useState('');
@@ -37,11 +37,11 @@ const Categoria = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        Alert.alert('Categoría ' + response.nombre + ' creada con éxito');
+     
         actualizarCategoria();
       })
       .catch((error) =>{
-        Alert.alert('Ocurrió un error en la creación de la categoria',error);
+      
       });
   };
 
@@ -65,7 +65,7 @@ const Categoria = () => {
       .then((resJson) => {
         Alert.alert('Categoría ' + response.nombre + ' editada con éxito');
         actualizarCategoria();
-      }).catch(e => { Alert.alert('Ocurrió un error en la edición de la categoria',error); });
+      }).catch(e => {});
   };
 
   
@@ -83,11 +83,11 @@ const Categoria = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        Alert.alert('Categoría ' + response.nombre + ' eliminada con éxito');
+        
         getCategorias();
       })
       .catch((error) =>{
-        Alert.alert('Ocurrió un error en la eliminacion de la categoria',error);
+        
       }
     )
   };
@@ -207,4 +207,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Categoria;
+export default Categorias;
