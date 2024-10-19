@@ -37,11 +37,11 @@ const Categorias = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-     
+        console.log("creado",response)
         actualizarCategoria();
       })
       .catch((error) =>{
-      
+        console.error(error)
       });
   };
 
@@ -61,11 +61,13 @@ const Categorias = () => {
       body: JSON.stringify({
         "nombre": nombre,
       })
-    }).then((res) => res.json())
-      .then((resJson) => {
-        Alert.alert('Categoría ' + response.nombre + ' editada con éxito');
+    }).then((response) => response.json())
+      .then((response) => {
+        console.log("editado",response);
         actualizarCategoria();
-      }).catch(e => {});
+      }).catch(error => {
+        console.error(error)
+      });
   };
 
   
@@ -83,11 +85,11 @@ const Categorias = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        
+        console.log("eliminado",response);
         getCategorias();
       })
       .catch((error) =>{
-        
+        console.error(error)
       }
     )
   };
