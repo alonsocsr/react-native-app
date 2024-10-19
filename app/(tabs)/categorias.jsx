@@ -1,19 +1,20 @@
 import { StatusBar, } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, SafeAreaView, Platform } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, Platform, View } from 'react-native';
 import { Surface, Title, TextInput } from 'react-native-paper';
-import ModalView from './ModalView';
-import CrearView from './CrearView';
+import ModalView from '../../components/ModalView';
+import Items from '../../components/Items';
 
 const Categorias = () => {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [nombre, setNombre] = useState('');
-  const [idCategoria, setCategoriaId] = useState(0);
+  const [idCategoria, setIdCategoria] = useState(0);
   const [loading, setLoading] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const API_URL = 'http://192.168.0.105:3000/categorias';
+  
+  const API_URL = 'http://192.168.0.10:3000/categorias';
   const getCategorias = async () => {
     setLoading(true);
     await fetch(API_URL)
@@ -50,7 +51,7 @@ const Categorias = () => {
     getCategorias();
     setVisible(false);
     setNombre('');
-    setCategoriaId(0);
+    setIdCategoria(0);
   };
 
 
@@ -73,7 +74,7 @@ const Categorias = () => {
   
   const editar = (id, nombre) => {
     setVisible(true);
-    setCategoriaId(id);
+    setIdCategoria(id);
     setNombre(nombre);
   };
 
@@ -113,23 +114,26 @@ const Categorias = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="bg-white" style={styles.container}>
       <StatusBar style="auto" />
-      <Surface style={styles.header}>
-        <Title>Categorías</Title>
-        <TouchableOpacity style={styles.button} onPress={() => setVisible(true)}>
-          <Text style={styles.buttonText}>Crear Categoria</Text>
+      <Surface className="bg-white" style={styles.header}>
+        <Title className="font-fbold">Categorías</Title>
+        <TouchableOpacity className="bg-pink-100" style={styles.button} onPress={() => setVisible(true)}>
+          <Text className="font-fsemibold text-pink-500">Crear Categoria</Text>
         </TouchableOpacity>
       </Surface>
 
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Buscar categoría por nombre"
-        value={searchQuery}
-        onChangeText={(text) => buscadorFiltrado(text)}
-      />
+      <View className="rounded-lg m-2 mb-2">
+        <TextInput
+            className="font-fsemibold bg-pink-100 rounded-lg"
+            style={styles.searchBar}
+            placeholder="Buscar categoría por nombre"
+            value={searchQuery}
+            onChangeText={(text) => buscadorFiltrado(text)}
+          />
+      </View>      
 
-      <Text style={styles.textFriends}>{filteredData.length} Categorías encontradas</Text>
+      <Text className="font-fsemibold" style={styles.textFriends}>{filteredData.length} Categorías encontradas</Text>
 
       <FlatList
         data={filteredData}
@@ -137,7 +141,7 @@ const Categorias = () => {
         refreshing={loading}
         onRefresh={getCategorias}
         renderItem={({ item }) => (
-          <CrearView
+          <Items
             nombre={item.nombre}
             onEdit={() => editar(item.id, item.nombre)}
             onDelete={() => eliminarCategoria(item.id)}
@@ -172,11 +176,9 @@ const Categorias = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     justifyContent: 'center',
   },
   header: {
-    marginTop: Platform.OS === 'android' ? 24 : 0,
     padding: 16,
     elevation: 2,
     flexDirection: 'row',
@@ -186,7 +188,6 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     borderRadius: 20,
-    backgroundColor: 'steelblue',
   },
   buttonText: {
     color: 'white',
@@ -194,16 +195,14 @@ const styles = StyleSheet.create({
   searchBar: {
     borderColor: '#ddd',
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    borderRadius: 20,
+    padding: 4,
     flexDirection:'row',
     justifyContent:'space-between',
     alignItems:'center'
   },
   textFriends: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
     marginBottom: 10,
     paddingHorizontal: 10,
   },

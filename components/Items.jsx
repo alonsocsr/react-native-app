@@ -11,12 +11,12 @@ const Button = ({ onPress, style, icon }) => (
   </TouchableOpacity>
 )
 
-export default function CrearView({ nombre, onEdit, onDelete }) {
+export default function Items({ nombre, onEdit, onDelete }) {
   return (
     <Card style={styles.item}>
       <View style={styles.rowView}>
         <View>
-          <Text style={styles.nombre}>{nombre}</Text>
+          <Text className="font-fregular" style={styles.nombre}>{nombre}</Text>
         </View>
         <View style={styles.rowView}>
           <Button
