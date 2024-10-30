@@ -11,12 +11,14 @@ const Button = ({ onPress, style, icon }) => (
   </TouchableOpacity>
 )
 
-export default function Items({ nombre, categoria,precio,onEdit, onDelete }) {
+export default function ItemsProd({ nombre, categoria,precioVenta,onEdit, onDelete }) {
   return (
     <Card style={styles.item}>
       <View style={styles.rowView}>
         <View>
           <Text className="font-fregular" style={styles.nombre}>{nombre}</Text>
+          <Text className="font-fregular" style={styles.categoria}>Categoria: {categoria}</Text>
+          <Text className="font-fregular" style={styles.precio}>Precio de venta: {precioVenta} GS</Text>
         </View>
         <View style={styles.rowView}>
           <Button
@@ -45,4 +47,11 @@ const styles = StyleSheet.create({
   nombre: {
     fontSize: 18,
   },
+  categoria: {
+    fontSize:10
+  },
+  precio:{
+    fontSize:12,
+    fontWeight:12,
+  }
 })

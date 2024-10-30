@@ -7,10 +7,6 @@
     {
       "id": "a859",
       "nombre": "Bebidas"
-    },
-    {
-      "id": "4caa",
-      "nombre": "Embutidos "
     }
   ],
   "productos": [
@@ -21,10 +17,10 @@
       "precioVenta": "300"
     },
     {
-      "id": "2",
-      "nombre": "Cafe",
-      "postId": "2",
-      "precioVenta": "300"
+      "nombre": "Camisilla",
+      "idCategoria": "1",
+      "precioVenta": 500,
+      "id": "2"
     }
   ]
 }
