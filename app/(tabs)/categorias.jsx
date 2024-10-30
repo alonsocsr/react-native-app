@@ -5,6 +5,7 @@ import { Surface, Title, TextInput } from 'react-native-paper';
 import ModalView from '../../components/ModalView';
 import Items from '../../components/Items';
 
+const {IP}=process.env
 const Categorias = () => {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -14,7 +15,7 @@ const Categorias = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   
-  const API_URL = 'http://192.168.0.10:3000/categorias';
+  const API_URL = `http://${IP}:3000/categorias`;
   const getCategorias = async () => {
     setLoading(true);
     await fetch(API_URL)
