@@ -19,8 +19,8 @@ const Productos = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const API_URL = `http://${IP}:3000/productos`;
-  const CATEGORIAS_URL = `http://${IP}:3000/categorias`;
+  const API_URL = "http://192.168.0.106:3000/productos";
+  const CATEGORIAS_URL ="http://192.168.0.106:3000/categorias";
 
 
   const getProductos = async () => {

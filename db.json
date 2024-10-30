@@ -22,5 +22,18 @@
       "precioVenta": 500,
       "id": "2"
     }
+  ],
+  "clientes": [
+    {
+      "id": "d3d6",
+      "cedula": "55677",
+      "nombre": "Josh",
+      "apellido": "Hutchinson "
+    }
+  ],
+  "ventas": [
+    {
+      "detalle": []
+    }
   ]
 }
