@@ -15,7 +15,7 @@ const Categorias = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   
-  const API_URL = `http://${IP}:3000/categorias`;
+  const API_URL = "http://192.168.0.106:3000/categorias";
   const getCategorias = async () => {
     setLoading(true);
     await fetch(API_URL)
