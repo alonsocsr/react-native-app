@@ -5,6 +5,7 @@ import { Surface, Title, TextInput } from 'react-native-paper';
 import ModalView from '../../components/ModalView';
 import ItemsProd from '../../components/ItemsProd';
 import { Picker } from '@react-native-picker/picker';
+import { db_ip } from '@env';
 const {IP}=process.env
 
 const Productos = () => {
@@ -19,8 +20,8 @@ const Productos = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const API_URL = "http://192.168.0.106:3000/productos";
-  const CATEGORIAS_URL ="http://192.168.0.106:3000/categorias";
+  const API_URL = `http://${db_ip}:3000/productos`;
+  const CATEGORIAS_URL = `http://${db_ip}:3000/categorias`;
 
 
   const getProductos = async () => {

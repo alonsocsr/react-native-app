@@ -1,7 +1,8 @@
 // api.js
 import axios from 'axios';
+import { db_ip } from '@env';
 
-const API_URL = 'http://192.168.0.106:3000';
+const API_URL = `http://${db_ip}:3000`;
 
 
 export const getProductos = async () => {
@@ -48,4 +49,71 @@ export const getClienteByCedula = async (cedula) => {
   const response = await fetch(`${API_URL}/clientes?cedula=${cedula}`);
   const data = await response.json();
   return data.length ? data[0] : null; 
+};
+
+export const getVentasFiltrado = async (filtroFechaDesde, filtroFechaHasta, filtroCliente) => {
+  try {
+    let url = `${API_URL}/ventas`;
+    const params = [];
+
+    if (filtroCliente) {
+      params.push(`idCliente=${filtroCliente}`);
+    }
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+    
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+    let filteredData = data;
+
+    if (filtroFechaDesde) {
+      filteredData = filteredData.filter(venta => new Date(venta.fecha) >= new Date(filtroFechaDesde));
+    }
+
+    if (filtroFechaHasta) {
+      filteredData = filteredData.filter(venta => new Date(venta.fecha) <= new Date(filtroFechaHasta));
+    }
+
+    return filteredData;
+  } catch (error) {
+    console.error('Error en el fetch de ventas:', error);
+    return [];
+  }
+};
+
+export const getClientes = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/clientes`);
+    return response.data;
+  } catch (error) {
+    console.error('Error en el fetch de clientes:', error);
+    return [];
+  }
+};
+
+export const getClientesFiltrado = async (nombre, apellido, cedula) => {
+  try {
+    const response = await axios.get(`${API_URL}/clientes`);
+    let clientes = response.data;
+
+    if (nombre) {
+      clientes = clientes.filter(cliente => cliente.nombre.toLowerCase().includes(nombre.toLowerCase()));
+    }
+
+    if (apellido) {
+      clientes = clientes.filter(cliente => cliente.apellido.toLowerCase().includes(apellido.toLowerCase()));
+    }
+
+    if (cedula) {
+      clientes = clientes.filter(cliente => cliente.cedula.includes(cedula));
+    }
+
+    return clientes;
+  } catch (error) {
+    console.error('Error en el fetch de clientes:', error);
+    return [];
+  }
 };
