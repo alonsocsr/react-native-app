@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, Platform, V
 import { Surface, Title, TextInput } from 'react-native-paper';
 import ModalView from '../../components/ModalView';
 import Items from '../../components/Items';
+import { db_ip } from '@env';
 
 const {IP}=process.env
 const Categorias = () => {
@@ -15,7 +16,7 @@ const Categorias = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   
-  const API_URL = "http://192.168.0.106:3000/categorias";
+  const API_URL = `http://${db_ip}:3000/categorias`;
   const getCategorias = async () => {
     setLoading(true);
     await fetch(API_URL)

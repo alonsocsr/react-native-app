@@ -1,39 +1,164 @@
 {
   "categorias": [
     {
-      "id": "1",
+      "id": 1,
       "nombre": "Ropas"
     },
     {
-      "id": "a859",
+      "id": 2,
       "nombre": "Bebidas"
+    },
+    {
+      "id": 3,
+      "nombre": "Enlatados"
     }
   ],
   "productos": [
     {
-      "id": "1",
+      "id": 1,
       "nombre": "Remera",
-      "idCategoria": "1",
-      "precioVenta": "300"
+      "idCategoria": 1,
+      "precioVenta": 300
     },
     {
+      "id": 2,
       "nombre": "Camisilla",
-      "idCategoria": "1",
-      "precioVenta": 500,
-      "id": "2"
+      "idCategoria": 1,
+      "precioVenta": 500
+    },
+    {
+      "id": 3,
+      "nombre": "Atun",
+      "idCategoria": 3,
+      "precioVenta": 5000
+    },
+    {
+      "id": 4,
+      "nombre": "Pantalón",
+      "idCategoria": 1,
+      "precioVenta": 700
+    },
+    {
+      "id": 5,
+      "nombre": "Cerveza",
+      "idCategoria": 2,
+      "precioVenta": 200
+    },
+    {
+      "id": 6,
+      "nombre": "Vino",
+      "idCategoria": 2,
+      "precioVenta": 1500
     }
   ],
   "clientes": [
     {
-      "id": "d3d6",
+      "id": 1,
       "cedula": "55677",
       "nombre": "Josh",
-      "apellido": "Hutchinson "
+      "apellido": "Hutchinson"
+    },
+    {
+      "id": 2,
+      "cedula": "88457",
+      "nombre": "Alice",
+      "apellido": "Johnson"
+    },
+    {
+      "id": 3,
+      "cedula": "33779",
+      "nombre": "Bob",
+      "apellido": "Smith"
     }
   ],
   "ventas": [
     {
-      "detalle": []
+      "idVenta": 1,
+      "fecha": "2023-11-01",
+      "idCliente": 1,
+      "total": 5600,
+      "detalle": [
+        {
+          "idVenta": 1,
+          "idDetalleVenta": 1,
+          "idProducto": 1,
+          "cantidad": 2,
+          "precio": 300
+        },
+        {
+          "idVenta": 1,
+          "idDetalleVenta": 2,
+          "idProducto": 3,
+          "cantidad": 1,
+          "precio": 5000
+        }
+      ]
+    },
+    {
+      "idVenta": 2,
+      "fecha": "2024-12-02",
+      "idCliente": 1,
+      "total": 5800,
+      "detalle": [
+        {
+          "idVenta": 2,
+          "idDetalleVenta": 3,
+          "idProducto": 2,
+          "cantidad": 1,
+          "precio": 500
+        },
+        {
+          "idVenta": 2,
+          "idDetalleVenta": 4,
+          "idProducto": 3,
+          "cantidad": 1,
+          "precio": 5000
+        },
+        {
+          "idVenta": 2,
+          "idDetalleVenta": 5,
+          "idProducto": 1,
+          "cantidad": 1,
+          "precio": 300
+        }
+      ]
+    },
+    {
+      "idVenta": 3,
+      "fecha": "2024-11-03",
+      "idCliente": 2,
+      "total": 2700,
+      "detalle": [
+        {
+          "idVenta": 3,
+          "idDetalleVenta": 6,
+          "idProducto": 4,
+          "cantidad": 3,
+          "precio": 700
+        },
+        {
+          "idVenta": 3,
+          "idDetalleVenta": 7,
+          "idProducto": 5,
+          "cantidad": 1,
+          "precio": 200
+        }
+      ]
+    },
+    {
+      "idVenta": 4,
+      "fecha": "2023-10-04",
+      "idCliente": 3,
+      "total": 3000,
+      "detalle": [
+        {
+          "idVenta": 4,
+          "idDetalleVenta": 8,
+          "idProducto": 6,
+          "cantidad": 2,
+          "precio": 1500
+        }
+      ]
     }
   ]
 }
