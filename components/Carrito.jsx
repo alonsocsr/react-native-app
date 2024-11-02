@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, Modal, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Modal, FlatList, TouchableOpacity, StyleSheet, Button } from 'react-native';
 
-const Carrito = ({ visible, carrito, onClose, onFinalizarCompra }) => {
+const Carrito = ({ visible, carrito, onClose, onFinalizarCompra, onEliminarDelCarrito }) => {
   return (
     <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
       <View style={styles.modalContainer}>
@@ -15,6 +15,9 @@ const Carrito = ({ visible, carrito, onClose, onFinalizarCompra }) => {
               <View style={styles.itemContainer}>
                 <Text className="font-fregular">{item.nombre} x {item.cantidad}</Text>
                 <Text className="font-fregular">{item.precioVenta * item.cantidad} GS</Text>
+                <TouchableOpacity className="pl-2 pr-2 pb-0.5 bg-red-600 rounded-md" onPress={() => onEliminarDelCarrito(item)}>
+                  <Text  className="font-fregular text-white" >x</Text>
+                </TouchableOpacity>
               </View>
             )}
           />

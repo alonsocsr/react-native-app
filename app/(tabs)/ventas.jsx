@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Modal } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Modal ,SafeAreaView} from 'react-native';
 import { getVentasFiltrado, getClientesFiltrado, getProductos, getClientes } from '../../components/api';
 import ModalView from '../../components/ModalView';
-import { TextInput } from 'react-native-paper';
+import { Surface, Title, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Ventas = () => {
@@ -51,13 +51,13 @@ const Ventas = () => {
   // filtros para las fechas de inicio
   const seleccionarFechaDesde = (event, selectedDate) => {
     setMostrarPickerDesde(false);
-    if (selectedDate) {
+    if (event.type === "set" && selectedDate) {
       setFiltroFechaDesde(selectedDate.toISOString().split('T')[0]);
     }
   };
   const seleccionarFechaHasta = (event, selectedDate) => {
     setMostrarPickerHasta(false);
-    if (selectedDate) {
+    if (event.type === "set" && selectedDate) {
       setFiltroFechaHasta(selectedDate.toISOString().split('T')[0]);
     }
   };
@@ -83,12 +83,15 @@ const Ventas = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Consultas de Ventas</Text>
+    <SafeAreaView style={styles.container}>
+      <Surface className="bg-white mt-6 mb-2" style={styles.header}>
+        <Title className="font-fbold">Ventas</Title>
+      </Surface>
       <View style={styles.center}>
         {/* filtros de fecha */}
         <View style={styles.row}>
-          <Button title="Desde" onPress={() => setMostrarPickerDesde(true)} />
+          <Text className="font-fsemibold">Filtrar por fecha: {' '}</Text>
+          <Button color={'#ec4899'} title="Desde" onPress={() => setMostrarPickerDesde(true)} />
           {mostrarPickerDesde && (
             <DateTimePicker
               value={filtroFechaDesde ? new Date(filtroFechaDesde) : new Date()}
@@ -98,8 +101,7 @@ const Ventas = () => {
             />
           )}
           <View style={styles.espace_1} />
-          <View style={styles.espace_1} />
-          <Button title="Hasta" onPress={() => setMostrarPickerHasta(true)} />
+          <Button color={'#ec4899'} title="Hasta" onPress={() => setMostrarPickerHasta(true)} />
           {mostrarPickerHasta && (
             <DateTimePicker
               value={filtroFechaHasta ? new Date(filtroFechaHasta) : new Date()}
@@ -118,6 +120,7 @@ const Ventas = () => {
             <Text style={styles.subTitle}>Fecha desde: {filtroFechaDesde}</Text>
             <View style={styles.espace_1} />
             <Button
+              color={'#ec4899'}
               title=" X "
               onPress={() => {
                 setFiltroFechaDesde(null);
@@ -130,6 +133,7 @@ const Ventas = () => {
             <Text style={styles.subTitle}>Fecha hasta: {filtroFechaHasta}</Text>
             <View style={styles.espace_1} />
             <Button
+              color={'#ec4899'}
               title=" X "
               onPress={() => {
                 setFiltroFechaHasta(null);
@@ -156,10 +160,13 @@ const Ventas = () => {
       <View style={styles.espace_05} />
 
       {/* Seleccion del cliente */}
-      <Button
-        title="Filtro de Cliente"
-        onPress={() => setModalVisible(true)}
-      />
+      <View className="ml-6 mr-6">
+        <Button
+          color={'#ec4899'}
+          title="Filtro de Cliente"
+          onPress={() => setModalVisible(true)}
+        />
+      </View>
 
       {/* Modal del cliente */}
       <ModalView
@@ -174,22 +181,23 @@ const Ventas = () => {
           label="Nombre"
           value={nombre}
           onChangeText={setNombre}
-          style={{ marginBottom: 10 }}
+          style={{ marginBottom: 10 , backgroundColor: '#fce7f3'}}
         />
 
         <TextInput
           label="Apellido"
           value={apellido}
           onChangeText={setApellido}
-          style={{ marginBottom: 10 }}
+          style={{ marginBottom: 10 , backgroundColor: '#fce7f3' }}
         />
         <TextInput
           label="Cédula"
           value={cedula}
           onChangeText={setCedula}
-          style={{ marginBottom: 10 }}
+          style={{ marginBottom: 10 , backgroundColor: '#fce7f3'}}
         />
         <Button
+          color={'#ec4899'}
           title="Limpiar"
           onPress={() => {
             setNombre('');
@@ -203,16 +211,22 @@ const Ventas = () => {
       <View style={styles.espace_05} />
 
       {/* Limpiador de filtros */}
-      <Button
-        title="Limpiar filtros"
-        onPress={async () => {
-          setFiltroFechaDesde(null);
-          setFiltroFechaHasta(null);
-          setFiltroCliente(null);
-          const data = await getVentasFiltrado(null, null, null);
-          setVentas(data);
-        }}
-      />
+      <View className="ml-6 mr-6">
+        <Button
+          color={'#ec4899'}
+          title="Limpiar filtros"
+          onPress={async () => {
+            setFiltroFechaDesde(null);
+            setFiltroFechaHasta(null);
+            setFiltroCliente(null);
+            setNombre('');
+            setApellido('');
+            setCedula('');
+            const data = await getVentasFiltrado(null, null, null);
+            setVentas(data);
+          }}
+        />
+      </View>
 
       {/* Lista de ventas con (o sin) los filtros aplicados */}
       <Text style={styles.subTitle}>Resultados:</Text>
@@ -221,16 +235,19 @@ const Ventas = () => {
       ) : (
         <FlatList
           data={ventas}
-          keyExtractor={(item) => item.idVenta.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleSeleccionarVenta(item)}>
-              <View style={styles.ventaItem}>
-                <Text>Fecha: {item.fecha}</Text>
-                <Text>Total: Gs {item.total}</Text>
-                <Text>Cliente: {clientes.find(cliente => cliente.id === item.idCliente)?.nombre}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+            const cliente = clientes.find(cliente => cliente.id == item.idCliente);
+            return (
+              <TouchableOpacity onPress={() => handleSeleccionarVenta(item)}>
+                <View className="mr-4 ml-4" style={styles.ventaItem}>
+                  <Text>Fecha: {item.fecha}</Text>
+                  <Text>Total: Gs {item.total}</Text>
+                  <Text>Cliente:  {cliente ? cliente.nombre : "Cliente no encontrado"}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
         />
       )}
 
@@ -241,39 +258,33 @@ const Ventas = () => {
           animationType="slide"
           onRequestClose={() => setDetalleVentaVisible(false)}
         >
-          <View style={styles.container}>
-            <Text style={styles.title}>Detalle de Venta</Text>
-            <View style={styles.row}>
-              <Text>Cliente: {clientes.find(cliente => cliente.id === ventaSeleccionada.idCliente)?.nombre}</Text>
-              <View style={styles.espace_1} />
-              <View style={styles.espace_1} />
-              <View style={styles.espace_1} />
-              <Text>Fecha: {ventaSeleccionada.fecha}</Text>
+          <View className="m-4" style={styles.container}>
+            <Text className="font-fsemibold" style={styles.title}>Detalle de Venta</Text>
+            <View className="mr-2 ml-2 flex-col">
+              <Text className="font-fregular">Cliente: {clientes.find(cliente => cliente.id == ventaSeleccionada.idCliente)?.nombre}</Text>
+              <Text className="font-fregular">Fecha: {ventaSeleccionada.fecha}</Text>
+              <Text className="font-fregular">Total: Gs {ventaSeleccionada.total}</Text>
             </View>
-            <Text>Total: Gs {ventaSeleccionada.total}</Text>
             {/* Lista de productos comprados */}
             <FlatList
               data={ventaSeleccionada.detalle}
               keyExtractor={(item) => item.idProducto.toString()}
               renderItem={({ item }) => (
                 <View style={styles.productoItem}>
-                  <Text>Producto: {productos.find(producto => producto.id === item.idProducto)?.nombre}</Text>
-                  <View style={styles.row}>
-                    <Text>Cantidad: {item.cantidad}</Text>
-                    <View style={styles.espace_1} />
-                    <View style={styles.espace_1} />
-                    <View style={styles.espace_1} />
-                    <Text>Precio: Gs {item.precio}</Text>
+                  <Text className="font-fregular" >Producto: {productos.find(producto => producto.id == item.idProducto)?.nombre}</Text>
+                  <View className="flex-col">
+                    <Text className="font-fregular" >Cantidad: {item.cantidad}</Text>
+                    <Text className="font-fregular" >Precio: Gs {item.precio}</Text>
                   </View>
-                  <Text>Sup Total: Gs {item.cantidad * item.precio}</Text>
+                  <Text className="font-fregular" >Sup Total: Gs {item.cantidad * item.precio}</Text>
                 </View>
               )}
             />
-            <Button title="Cerrar" onPress={() => setDetalleVentaVisible(false)} />
+            <Button color={'#ec4899'} title="Cerrar" onPress={() => setDetalleVentaVisible(false)} />
           </View>
         </Modal>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -281,12 +292,10 @@ const Ventas = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -304,7 +313,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
+    shadowRadius: 8,
     elevation: 2,
   },
   productoItem: {
@@ -327,7 +336,77 @@ const styles = StyleSheet.create({
   },
   espace_05: {
     margin: 4,
-  }
+  },
+  header: {
+    padding: 16,
+    elevation: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    marginTop: 20
+
+  },
+  input: {
+    height: 40,
+    borderColor: '#cbd5e1',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: '#f9fafb',
+    marginBottom: 8,
+  },
+  picker: {
+    height: 40,
+    borderColor: '#cbd5e1',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: '#ffffff',
+    marginBottom: 8,
+  },
+  Button: {
+    backgroundColor: '#ec4899',
+    padding: 12,
+    borderRadius: 8,
+    margin: 16,
+    alignItems: 'center',
+  },
+  ButtonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  emptyText: {
+    color: '#9ca3af',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    margin: 20,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 10,
+  },
 });
 
 export default Ventas;

@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   addButton: {
-    backgroundColor: '#f9a8d4',
+    backgroundColor: '#ec4899',
     padding: 8,
     borderRadius: 5,
   },
