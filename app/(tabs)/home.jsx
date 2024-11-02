@@ -4,8 +4,10 @@ import { Surface, Title } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import Carrito from '../../components/Carrito';
 import ItemVentas from '../../components/ItemVentas';
+import { db_ip } from '@env';
 
-const API_BASE_URL = 'http://192.168.0.17:3000';
+
+const API_BASE_URL = `http://${db_ip}:3000`;
 
 const Home = () => {
   const [productos, setProductos] = useState([]);
@@ -21,7 +23,7 @@ const Home = () => {
   useEffect(() => {
     getProductos();
     getCategorias();
-  }, []);
+  }, [categorias, productos]);
 
   const getProductos = async () => {
     try {
@@ -64,6 +66,24 @@ const Home = () => {
     }
   };
 
+  const eliminarDelCarrito = (producto) => {
+    const productoEnCarrito = carrito.find((item) => item.id === producto.id);
+    
+    if (productoEnCarrito) {
+      if (productoEnCarrito.cantidad > 1) {
+        setCarrito(
+          carrito.map((item) =>
+            item.id === producto.id
+              ? { ...item, cantidad: item.cantidad - 1 }
+              : item
+          )
+        );
+      } else {
+        setCarrito(carrito.filter((item) => item.id !== producto.id));
+      }
+    }
+  };
+
   const verificarYRegistrarCliente = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/clientes?cedula=${cliente.cedula}`);
@@ -96,11 +116,20 @@ const Home = () => {
       return;
     }
 
+  const obtenerNuevoId = async () => {
+    const response = await fetch(`${API_BASE_URL}/ventas`);
+    const ventas = await response.json();
+    const ultimoId = ventas.length > 0 ? Math.max(...ventas.map(venta => parseInt(venta.id))) : 0;
+    return ultimoId + 1;
+  };
+
     try {
+      const nuevoId = await obtenerNuevoId();
       const orden = {
+        id: nuevoId,
         idCliente,
         fecha: new Date().toISOString().split('T')[0],
-        productos: carrito.map(item => ({
+        detalle: carrito.map(item => ({
           idProducto: item.id,
           cantidad: item.cantidad,
           precio: item.precioVenta,
@@ -134,7 +163,7 @@ const Home = () => {
 
   return (
     <SafeAreaView className="bg-white" style={styles.container}>
-      <Surface className="bg-white" style={styles.header}>
+      <Surface className="bg-white mt-6" style={styles.header}>
         <Title className="font-fbold">Inicio</Title>
       </Surface>
 
@@ -185,6 +214,7 @@ const Home = () => {
           setIsCarritoVisible(false);
           setIsClienteModalVisible(true); // Abre el modal para datos del cliente
         }}
+        onEliminarDelCarrito={eliminarDelCarrito}
       />
 
       {/* Modal para capturar datos del cliente */}
@@ -219,8 +249,9 @@ const Home = () => {
               onChangeText={(text) => setCliente({ ...cliente, apellido: text })}
             />
             <View style={styles.buttonContainer}>
-              <Button title="Cancelar" onPress={() => setIsClienteModalVisible(false)} />
+              <Button color={'#ff0000'} title="Cancelar" onPress={() => setIsClienteModalVisible(false)} />
               <Button
+                color={'#ec4899'}
                 title="Confirmar Orden"
                 onPress={() => {
                   setIsClienteModalVisible(false);

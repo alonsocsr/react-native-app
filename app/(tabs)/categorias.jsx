@@ -6,7 +6,7 @@ import ModalView from '../../components/ModalView';
 import Items from '../../components/Items';
 import { db_ip } from '@env';
 
-const {IP}=process.env
+
 const Categorias = () => {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -118,17 +118,16 @@ const Categorias = () => {
   return (
     <SafeAreaView className="bg-white" style={styles.container}>
       <StatusBar style="auto" />
-      <Surface className="bg-white" style={styles.header}>
+      <Surface className="bg-white mt-6" style={styles.header}>
         <Title className="font-fbold">Categorías</Title>
-        <TouchableOpacity className="bg-pink-100" style={styles.button} onPress={() => setVisible(true)}>
-          <Text className="font-fsemibold text-pink-500">Crear Categoria</Text>
+        <TouchableOpacity className="bg-pink-600" style={styles.button} onPress={() => setVisible(true)}>
+          <Text className="font-fsemibold text-white">Crear Categoria</Text>
         </TouchableOpacity>
       </Surface>
 
-      <View className="rounded-lg m-2 mb-2">
+      <View style={styles.searchContainer}>
         <TextInput
-            className="font-fsemibold bg-pink-100 rounded-lg"
-            style={styles.searchBar}
+            style={[styles.input, { backgroundColor: '#fce7f3' }]}
             placeholder="Buscar categoría por nombre"
             value={searchQuery}
             onChangeText={(text) => buscadorFiltrado(text)}
@@ -187,6 +186,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    marginTop: 20
+  },
   button: {
     padding: 10,
     borderRadius: 20,
@@ -194,19 +198,19 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
   },
-  searchBar: {
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 4,
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center'
-  },
   textFriends: {
     fontSize: 15,
     marginBottom: 10,
     paddingHorizontal: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: '#cbd5e1',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: '#f9fafb',
+    marginBottom: 8,
   },
 });
 

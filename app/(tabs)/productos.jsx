@@ -6,7 +6,7 @@ import ModalView from '../../components/ModalView';
 import ItemsProd from '../../components/ItemsProd';
 import { Picker } from '@react-native-picker/picker';
 import { db_ip } from '@env';
-const {IP}=process.env
+
 
 const Productos = () => {
   const [data, setData] = useState([]);
@@ -136,17 +136,16 @@ const Productos = () => {
   return (
     <SafeAreaView className="bg-white" style={styles.container}>
       <StatusBar style="auto" />
-      <Surface className="bg-white" style={styles.header}>
+      <Surface className="bg-white mt-6" style={styles.header}>
         <Title className="font-fbold">Productos</Title>
-        <TouchableOpacity className="bg-pink-100" style={styles.button} onPress={() => setVisible(true)}>
-          <Text className="font-fsemibold text-pink-500">Crear Producto</Text>
+        <TouchableOpacity className="bg-pink-600" style={styles.button} onPress={() => setVisible(true)}>
+          <Text className="font-fsemibold text-white">Crear Producto</Text>
         </TouchableOpacity>
       </Surface>
 
-      <View className="rounded-lg m-2 mb-2">
+      <View style={styles.searchContainer}>
         <TextInput
-          className="font-fsemibold bg-pink-100 rounded-lg"
-          style={styles.searchBar}
+          style={[styles.input, { backgroundColor: '#fce7f3' }]}
           placeholder="Buscar producto por nombre"
           value={searchQuery}
           onChangeText={(text) => buscadorFiltrado(text)}
@@ -226,11 +225,20 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
   },
-  searchBar: {
-    borderColor: '#ddd',
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    marginTop: 20
+
+  },
+  input: {
+    height: 40,
+    borderColor: '#cbd5e1',
     borderWidth: 1,
-    borderRadius: 20,
-    padding: 4,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: '#f9fafb',
+    marginBottom: 8,
   },
   textFriends: {
     fontSize: 15,
