@@ -1,71 +1,93 @@
 {
   "categorias": [
     {
-      "id": 1,
+      "id": "1",
       "nombre": "Ropas"
     },
     {
-      "id": 2,
+      "id": "2",
       "nombre": "Bebidas"
     },
     {
-      "id": 3,
+      "id": "3",
       "nombre": "Enlatados"
+    },
+    {
+      "id": "1ede",
+      "nombre": "Dulces"
     }
   ],
   "productos": [
     {
-      "id": 1,
+      "id": "1",
       "nombre": "Remera",
-      "idCategoria": 1,
+      "idCategoria": "1",
       "precioVenta": 300
     },
     {
-      "id": 2,
+      "id": "2",
       "nombre": "Camisilla",
-      "idCategoria": 1,
+      "idCategoria": "1",
       "precioVenta": 500
     },
     {
-      "id": 3,
+      "id": "3",
       "nombre": "Atun",
-      "idCategoria": 3,
+      "idCategoria": "3",
       "precioVenta": 5000
     },
     {
-      "id": 4,
+      "id": "4",
       "nombre": "Pantalón",
-      "idCategoria": 1,
+      "idCategoria": "1",
       "precioVenta": 700
     },
     {
-      "id": 5,
+      "id": "5",
       "nombre": "Cerveza",
-      "idCategoria": 2,
+      "idCategoria": "2",
       "precioVenta": 200
     },
     {
-      "id": 6,
+      "id": "6",
       "nombre": "Vino",
-      "idCategoria": 2,
+      "idCategoria": "2",
       "precioVenta": 1500
+    },
+    {
+      "id": "b45c",
+      "nombre": "gaseosa",
+      "idCategoria": "2",
+      "precioVenta": 10000
+    },
+    {
+      "id": "5b7a",
+      "nombre": "caramelos",
+      "idCategoria": "1ede",
+      "precioVenta": 1000
+    },
+    {
+      "id": "15a6",
+      "nombre": "Barra de chocolate",
+      "idCategoria": "1ede",
+      "precioVenta": 10000
     }
   ],
   "clientes": [
     {
-      "id": 1,
+      "id": "1",
       "cedula": "55677",
       "nombre": "Josh",
       "apellido": "Hutchinson"
     },
     {
-      "id": 2,
+      "id": "2",
       "cedula": "88457",
       "nombre": "Alice",
       "apellido": "Johnson"
     },
     {
-      "id": 3,
+      "id": "3",
       "cedula": "33779",
       "nombre": "Bob",
       "apellido": "Smith"
@@ -73,7 +95,7 @@
   ],
   "ventas": [
     {
-      "id": 1,
+      "id": "1",
       "fecha": "2023-11-01",
       "idCliente": 1,
       "total": 5600,
@@ -91,7 +113,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "2",
       "fecha": "2024-12-02",
       "idCliente": 1,
       "total": 5800,
@@ -114,7 +136,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": "3",
       "fecha": "2024-11-03",
       "idCliente": 2,
       "total": 2700,
@@ -134,7 +156,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": "4",
       "fecha": "2023-10-04",
       "idCliente": 3,
       "total": 3000,
