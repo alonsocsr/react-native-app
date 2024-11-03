@@ -23,7 +23,7 @@ const Home = () => {
   useEffect(() => {
     getProductos();
     getCategorias();
-  }, [categorias, productos]);
+  }, []);
 
   const getProductos = async () => {
     try {
@@ -52,6 +52,7 @@ const Home = () => {
       const matchesCategory = !categoriaSeleccionada || item.idCategoria.toString() === categoriaSeleccionada.toString();
       return matchesSearchQuery && matchesCategory;
     });
+    getProductos();
     setFilteredProductos(filteredData);
   }, [searchQuery, categoriaSeleccionada, productos]);
 
