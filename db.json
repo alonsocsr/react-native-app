@@ -13,8 +13,12 @@
       "nombre": "Enlatados"
     },
     {
-      "id": "1ede",
+      "id": "4",
       "nombre": "Dulces"
+    },
+    {
+      "nombre": "Tecnologias",
+      "id": "6"
     }
   ],
   "productos": [
@@ -55,22 +59,28 @@
       "precioVenta": 1500
     },
     {
-      "id": "b45c",
+      "id": "7",
       "nombre": "gaseosa",
       "idCategoria": "2",
       "precioVenta": 10000
     },
     {
-      "id": "5b7a",
       "nombre": "caramelos",
-      "idCategoria": "1ede",
-      "precioVenta": 1000
+      "idCategoria": "4",
+      "precioVenta": 10005,
+      "id": "8"
     },
     {
-      "id": "15a6",
-      "nombre": "Barra de chocolate",
-      "idCategoria": "1ede",
-      "precioVenta": 10000
+      "id": "9",
+      "nombre": "Parlantes",
+      "idCategoria": "6",
+      "precioVenta": 140000
+    },
+    {
+      "id": "10",
+      "nombre": "Choclo",
+      "idCategoria": "3",
+      "precioVenta": 400
     }
   ],
   "clientes": [
@@ -91,22 +101,34 @@
       "cedula": "33779",
       "nombre": "Bob",
       "apellido": "Smith"
+    },
+    {
+      "id": "4",
+      "cedula": "7654321",
+      "nombre": "German",
+      "apellido": "Mendieta"
+    },
+    {
+      "id": "5",
+      "cedula": "1234567",
+      "nombre": "Majito",
+      "apellido": "Mendoza"
     }
   ],
   "ventas": [
     {
       "id": "1",
       "fecha": "2023-11-01",
-      "idCliente": 1,
+      "idCliente": "1",
       "total": 5600,
       "detalle": [
         {
-          "idProducto": 1,
+          "idProducto": "1",
           "cantidad": 2,
           "precio": 300
         },
         {
-          "idProducto": 3,
+          "idProducto": "3",
           "cantidad": 1,
           "precio": 5000
         }
@@ -115,21 +137,21 @@
     {
       "id": "2",
       "fecha": "2024-12-02",
-      "idCliente": 1,
+      "idCliente": "1",
       "total": 5800,
       "detalle": [
         {
-          "idProducto": 2,
+          "idProducto": "2",
           "cantidad": 1,
           "precio": 500
         },
         {
-          "idProducto": 3,
+          "idProducto": "3",
           "cantidad": 1,
           "precio": 5000
         },
         {
-          "idProducto": 1,
+          "idProducto": "1",
           "cantidad": 1,
           "precio": 300
         }
@@ -138,18 +160,18 @@
     {
       "id": "3",
       "fecha": "2024-11-03",
-      "idCliente": 2,
+      "idCliente": "2",
       "total": 2700,
       "detalle": [
         {
-          "idVenta": 3,
-          "idDetalleVenta": 6,
-          "idProducto": 4,
+          "idVenta": "3",
+          "idDetalleVenta": "6",
+          "idProducto": "4",
           "cantidad": 3,
           "precio": 700
         },
         {
-          "idProducto": 5,
+          "idProducto": "5",
           "cantidad": 1,
           "precio": 200
         }
@@ -158,15 +180,108 @@
     {
       "id": "4",
       "fecha": "2023-10-04",
-      "idCliente": 3,
+      "idCliente": "3",
       "total": 3000,
       "detalle": [
         {
-          "idProducto": 6,
+          "idProducto": "6",
           "cantidad": 2,
           "precio": 1500
         }
       ]
+    },
+    {
+      "id": "5",
+      "idCliente": "4",
+      "fecha": "2024-11-03",
+      "detalle": [
+        {
+          "idProducto": "1",
+          "cantidad": 1,
+          "precio": 300
+        },
+        {
+          "idProducto": "2",
+          "cantidad": 1,
+          "precio": 500
+        }
+      ],
+      "total": 800
+    },
+    {
+      "id": "7",
+      "idCliente": "4",
+      "fecha": "2024-11-03",
+      "detalle": [
+        {
+          "idProducto": "4",
+          "cantidad": 2,
+          "precio": 700
+        }
+      ],
+      "total": 1400
+    },
+    {
+      "id": "8",
+      "idCliente": "4",
+      "fecha": "2024-11-03",
+      "detalle": [
+        {
+          "idProducto": "10",
+          "cantidad": 6,
+          "precio": 10000
+        }
+      ],
+      "total": 60000
+    },
+    {
+      "id": "9",
+      "idCliente": "4",
+      "fecha": "2024-11-03",
+      "detalle": [
+        {
+          "idProducto": "10",
+          "cantidad": 6,
+          "precio": 10000
+        }
+      ],
+      "total": 60000
+    },
+    {
+      "id": "10",
+      "idCliente": "4",
+      "fecha": "2024-11-03",
+      "detalle": [
+        {
+          "idProducto": "1",
+          "cantidad": 1,
+          "precio": 300
+        },
+        {
+          "idProducto": "2",
+          "cantidad": 1,
+          "precio": 500
+        },
+        {
+          "idProducto": "4",
+          "cantidad": 1,
+          "precio": 700
+        }
+      ],
+      "total": 1500
+    },
+    {
+      "id": "11",
+      "idCliente": "5",
+      "fecha": "2024-11-03",
+      "detalle": [
+        {
+          "idProducto": "9",
+          "cantidad": 1,
+          "precio": 140000
+        }
+      ],
+      "total": 140000
     }
   ]
 }

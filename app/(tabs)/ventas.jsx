@@ -69,7 +69,7 @@ const Ventas = () => {
     if (clientesFiltrados.length > 0) {
       setFiltroCliente(clientesFiltrados[0].id);
     } else {
-      setFiltroCliente(null);
+      setFiltroCliente('-1');
     }
     setModalVisible(false);
   };
@@ -200,9 +200,9 @@ const Ventas = () => {
           color={'#ec4899'}
           title="Limpiar"
           onPress={() => {
-            setNombre('');
-            setApellido('');
-            setCedula('');
+            setNombre(null);
+            setApellido(null);
+            setCedula(null);
           }
           }
         />
@@ -219,9 +219,9 @@ const Ventas = () => {
             setFiltroFechaDesde(null);
             setFiltroFechaHasta(null);
             setFiltroCliente(null);
-            setNombre('');
-            setApellido('');
-            setCedula('');
+            setNombre(null);
+            setApellido(null);
+            setCedula(null);
             const data = await getVentasFiltrado(null, null, null);
             setVentas(data);
           }}
@@ -243,7 +243,7 @@ const Ventas = () => {
                 <View className="mr-4 ml-4" style={styles.ventaItem}>
                   <Text>Fecha: {item.fecha}</Text>
                   <Text>Total: Gs {item.total}</Text>
-                  <Text>Cliente:  {cliente ? cliente.nombre : "Cliente no encontrado"}</Text>
+                  <Text>Cliente:  {cliente ? `${cliente.nombre} ${cliente.apellido}` : "Cliente no encontrado"}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -261,17 +261,18 @@ const Ventas = () => {
           <View className="m-4" style={styles.container}>
             <Text className="font-fsemibold" style={styles.title}>Detalle de Venta</Text>
             <View className="mr-2 ml-2 flex-col">
-              <Text className="font-fregular">Cliente: {clientes.find(cliente => cliente.id == ventaSeleccionada.idCliente)?.nombre}</Text>
+            <Text className="font-fregular" >Cliente: {clientes.find(cliente => cliente.id === ventaSeleccionada.idCliente)?.nombre} {clientes.find(cliente => cliente.id === ventaSeleccionada.idCliente)?.apellido}</Text>
               <Text className="font-fregular">Fecha: {ventaSeleccionada.fecha}</Text>
               <Text className="font-fregular">Total: Gs {ventaSeleccionada.total}</Text>
             </View>
+            <View style={{ borderBottomColor: '#ddd', borderBottomWidth: 1 }} />
             {/* Lista de productos comprados */}
             <FlatList
               data={ventaSeleccionada.detalle}
               keyExtractor={(item) => item.idProducto.toString()}
               renderItem={({ item }) => (
                 <View style={styles.productoItem}>
-                  <Text className="font-fregular" >Producto: {productos.find(producto => producto.id == item.idProducto)?.nombre}</Text>
+                  <Text className="font-fregular" >Producto: {productos.find(producto => producto.id === item.idProducto)?.nombre}</Text>
                   <View className="flex-col">
                     <Text className="font-fregular" >Cantidad: {item.cantidad}</Text>
                     <Text className="font-fregular" >Precio: Gs {item.precio}</Text>

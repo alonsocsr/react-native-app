@@ -19,7 +19,7 @@ export const getOrCreateCliente = async (clientInfo) => {
   try {
     const response = await axios.get(`${API_URL}/clientes?cedula=${clientInfo.cedula}`);
     if (response.data.length > 0) {
-      return response.data[0]; 
+      return response.data[0];
     } else {
       const newClient = await axios.post(`${API_URL}/clientes`, clientInfo);
       return newClient.data;
@@ -30,25 +30,25 @@ export const getOrCreateCliente = async (clientInfo) => {
   }
 };
 export const getCategorias = async () => {
-    const response = await fetch(`${API_URL}/categorias`);
-    const data = await response.json();
-    return data;
-  };
-  
+  const response = await fetch(`${API_URL}/categorias`);
+  const data = await response.json();
+  return data;
+};
+
 
 export const agregarVenta = async (venta) => {
-await fetch(`${API_URL}/ventas`, {
+  await fetch(`${API_URL}/ventas`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(venta),
-});
+  });
 };
-  
-  
+
+
 export const getClienteByCedula = async (cedula) => {
   const response = await fetch(`${API_URL}/clientes?cedula=${cedula}`);
   const data = await response.json();
-  return data.length ? data[0] : null; 
+  return data.length ? data[0] : null;
 };
 
 export const getVentasFiltrado = async (filtroFechaDesde, filtroFechaHasta, filtroCliente) => {
@@ -62,7 +62,7 @@ export const getVentasFiltrado = async (filtroFechaDesde, filtroFechaHasta, filt
     if (params.length > 0) {
       url += `?${params.join('&')}`;
     }
-    
+
 
     const response = await fetch(url);
 
@@ -77,6 +77,11 @@ export const getVentasFiltrado = async (filtroFechaDesde, filtroFechaHasta, filt
       filteredData = filteredData.filter(venta => new Date(venta.fecha) <= new Date(filtroFechaHasta));
     }
 
+    if (filtroCliente) {
+      if (filtroCliente !== '-1') {
+        filteredData = filteredData.filter(venta => venta.idCliente === filtroCliente);
+      }
+    }
     return filteredData;
   } catch (error) {
     console.error('Error en el fetch de ventas:', error);
@@ -97,17 +102,17 @@ export const getClientes = async () => {
 export const getClientesFiltrado = async (nombre, apellido, cedula) => {
   try {
     const response = await axios.get(`${API_URL}/clientes`);
-    let clientes = response.data;
+    let clientes = response.data || [];
 
-    if (nombre) {
+    if (nombre !== null && nombre !== undefined) {
       clientes = clientes.filter(cliente => cliente.nombre.toLowerCase().includes(nombre.toLowerCase()));
     }
 
-    if (apellido) {
+    if (apellido !== null && apellido !== undefined) {
       clientes = clientes.filter(cliente => cliente.apellido.toLowerCase().includes(apellido.toLowerCase()));
     }
 
-    if (cedula) {
+    if (cedula !== null && cedula !== undefined) {
       clientes = clientes.filter(cliente => cliente.cedula.includes(cedula));
     }
 

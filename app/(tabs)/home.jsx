@@ -85,8 +85,23 @@ const Home = () => {
     }
   };
 
+  const obtenerNuevoIdCliente = async () => {
+    const response = await fetch(`${API_BASE_URL}/clientes`);
+    const clientes = await response.json();
+    const ultimoId = clientes.length > 0 ? Math.max(...clientes.map(cliente => parseInt(cliente.id))) : 0;
+    return (ultimoId + 1).toString();
+  };
+  
   const verificarYRegistrarCliente = async () => {
     try {
+      const isCedulaEmpty = cliente.cedula.trim() === '';
+      const isNombreEmpty = cliente.nombre.trim() === '';
+      const isApellidoEmpty = cliente.apellido.trim() === '';
+      const isClienteDataValid = !isCedulaEmpty && !isNombreEmpty && !isApellidoEmpty;
+      if (!isClienteDataValid){
+        // Los datos no son validos si no se completo algun campo, se retorna null
+        return null;
+      }
       const response = await fetch(`${API_BASE_URL}/clientes?cedula=${cliente.cedula}`);
       const data = await response.json();
 
@@ -95,10 +110,12 @@ const Home = () => {
         return data[0].id;
       } else {
         // Cliente no existe, créalo
+        const nuevoId = await obtenerNuevoIdCliente();
+        body = JSON.stringify({ ...cliente, id: nuevoId });
         const nuevoClienteResponse = await fetch(`${API_BASE_URL}/clientes`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(cliente),
+          body: body,
         });
         const nuevoClienteData = await nuevoClienteResponse.json();
         return nuevoClienteData.id; // Retorna el id del cliente creado
@@ -121,14 +138,14 @@ const Home = () => {
     const response = await fetch(`${API_BASE_URL}/ventas`);
     const ventas = await response.json();
     const ultimoId = ventas.length > 0 ? Math.max(...ventas.map(venta => parseInt(venta.id))) : 0;
-    return ultimoId + 1;
+    return (ultimoId + 1).toString();
   };
 
     try {
       const nuevoId = await obtenerNuevoId();
       const orden = {
         id: nuevoId,
-        idCliente,
+        idCliente: idCliente,
         fecha: new Date().toISOString().split('T')[0],
         detalle: carrito.map(item => ({
           idProducto: item.id,

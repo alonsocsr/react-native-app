@@ -10,7 +10,7 @@ import { db_ip } from '@env';
 
 const Productos = () => {
   const [data, setData] = useState([]);
-  const [categorias, setCategorias] = useState([]); 
+  const [categorias, setCategorias] = useState([]);
   const [visible, setVisible] = useState(false);
   const [nombre, setNombre] = useState('');
   const [idProducto, setIdProducto] = useState(0);
@@ -41,26 +41,44 @@ const Productos = () => {
     await fetch(CATEGORIAS_URL)
       .then((response) => response.json())
       .then((response) => {
-        setCategorias(response); 
+        setCategorias(response);
       })
       .catch((e) => console.log(e));
   };
 
+  const obtenerNuevoIdProducto = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const productos = await response.json();
+      const nuevoId = productos.length > 0 ? (Math.max(...productos.map(producto => parseInt(producto.id))) + 1).toString() : '1';
+      return nuevoId;
+    } catch (error) {
+      console.error('Error al obtener el nuevo ID del producto:', error);
+      return null;
+    }
+  };
 
-  const agregarProducto = (nombre, idCategoria, precioVenta) => {
+  const agregarProducto = async (nombre, idCategoria, precioVenta) => {
 
+    if (!nombre.trim() || !idCategoria || precioVenta == null) {
+      
+      alert('Todos los campos son obligatorios');
+      console.error('Todos los campos son obligatorios');
+      return;
+    }
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        "nombre":nombre,
-        "idCategoria":idCategoria,
-        "precioVenta":precioVenta
+        "id": await obtenerNuevoIdProducto(),
+        "nombre": nombre,
+        "idCategoria": idCategoria,
+        "precioVenta": precioVenta
       }),
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log("producto creado",response)
+        console.log("producto creado", response)
         actualizarProducto();
       })
       .catch((error) => console.error(error));
@@ -74,28 +92,33 @@ const Productos = () => {
     setPrecioVenta(0);
   };
 
-  const editarProducto = (idProducto,nombre,idCategoria,precioVenta) => {
+  const editarProducto = (idProducto, nombre, idCategoria, precioVenta) => {
+    if (!nombre || !idCategoria || !precioVenta) {
+      alert('Todos los campos son obligatorios');
+      console.error('Todos los campos son obligatorios');
+      return;
+    }
     fetch(`${API_URL}/${idProducto}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         "nombre": nombre,
-        "idCategoria":idCategoria,
-        "precioVenta": precioVenta
+        "idCategoria": idCategoria,
+        "precioVenta": parseInt(precioVenta)
       })
     }).then((response) => response.json())
       .then((response) => {
-        console.log("producto editado",response)
+        console.log("producto editado", response)
         actualizarProducto();
       }).catch((error) => console.error(error));
   };
-  
-  const editar = (id, nombre, idCategoria,precio) => {
+
+  const editar = (id, nombre, idCategoria, precio) => {
     setVisible(true);
     setIdProducto(id);
     setNombre(nombre);
     setIdCategoria(idCategoria)
-    setPrecioVenta(precio);
+    setPrecioVenta(precio.toString());
   };
 
 
@@ -104,15 +127,15 @@ const Productos = () => {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     })
-    .then((response) => {
-      if (response.ok) {
-        console.log('Producto eliminado con éxito');
-        getProductos();
-      } else {
-        console.error('Error al eliminar el producto');
-      }
-    })
-    .catch((error) => console.error(error));
+      .then((response) => {
+        if (response.ok) {
+          console.log('Producto eliminado con éxito');
+          getProductos();
+        } else {
+          console.error('Error al eliminar el producto');
+        }
+      })
+      .catch((error) => console.error(error));
   };
   // Filtrar productos por nombre
   const buscadorFiltrado = (text) => {
@@ -130,7 +153,7 @@ const Productos = () => {
   };
   useEffect(() => {
     getProductos();
-    getCategorias(); 
+    getCategorias();
   }, []);
 
   return (
@@ -156,15 +179,15 @@ const Productos = () => {
 
       <FlatList
         data={filteredData}
-        keyExtractor={(item,index) => item.id + index.toString()}
+        keyExtractor={(item, index) => item.id + index.toString()}
         refreshing={loading}
         onRefresh={getProductos}
         renderItem={({ item }) => (
           <ItemsProd
             nombre={item.nombre}
-            categoria={categorias.find(cat => cat.id === item.idCategoria)?.nombre} 
+            categoria={categorias.find(cat => cat.id === item.idCategoria)?.nombre}
             precioVenta={item.precioVenta}
-            onEdit={() => editar(item.id, item.nombre,item.idCategoria,item.precioVenta)}
+            onEdit={() => editar(item.id, item.nombre, item.idCategoria, item.precioVenta)}
             onDelete={() => eliminarProducto(item.id)}
           />
         )}
@@ -176,13 +199,13 @@ const Productos = () => {
         onDismiss={() => setVisible(false)}
         onSubmit={() => {
           if (idProducto !== 0) {
-            editarProducto(idProducto, nombre, idCategoria, precioVenta); 
+            editarProducto(idProducto, nombre, idCategoria, precioVenta);
           } else {
             agregarProducto(nombre, idCategoria, precioVenta);
           }
         }}
         cancelable
-        >
+      >
         <TextInput
           label="Nombre"
           value={nombre}
