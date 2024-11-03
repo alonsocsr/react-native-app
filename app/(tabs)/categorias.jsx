@@ -29,25 +29,40 @@ const Categorias = () => {
     setLoading(false);
   };
 
+  const obtenerNuevoIdCategoria = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const categorias = await response.json();
+      const nuevoId = categorias.length > 0 ? (Math.max(...categorias.map(categoria => parseInt(categoria.id))) + 1).toString() : '1';
+      return nuevoId;
+    } catch (error) {
+      console.error('Error al obtener el nuevo ID de la categoría:', error);
+      return null;
+    }
+  };
 
-  const agregarCategoria = (nombre) => {
+  const agregarCategoria = async (nombre) => {
+    if (!nombre.trim()) {
+      alert('El nombre de la categoría no puede estar vacío.');
+      return;
+    }
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        "id": await obtenerNuevoIdCategoria(),
         "nombre": nombre
       }),
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log("creado",response)
+        console.log("creado", response);
         actualizarCategoria();
       })
-      .catch((error) =>{
-        console.error(error)
+      .catch((error) => {
+        console.error(error);
       });
   };
-
 
   const actualizarCategoria = () => {
     getCategorias();
