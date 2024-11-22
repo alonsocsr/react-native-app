@@ -2,23 +2,28 @@
   "categorias": [
     {
       "id": "1",
-      "nombre": "Ropas"
+      "nombre": "Ropas",
+      "icono":"shirt"
     },
     {
       "id": "2",
-      "nombre": "Bebidas"
+      "nombre": "Bebidas",
+      "icono":"wine"
     },
     {
       "id": "3",
-      "nombre": "Enlatados"
+      "nombre": "Enlatados",
+      "icono":"attach-sharp"
     },
     {
       "id": "4",
-      "nombre": "Dulces"
+      "nombre": "Dulces",
+      "icono":"beaker"
     },
     {
       "nombre": "Tecnologias",
-      "id": "6"
+      "id": "6",
+      "icono":"cellular"
     }
   ],
   "productos": [
@@ -26,61 +31,81 @@
       "id": "1",
       "nombre": "Remera",
       "idCategoria": "1",
-      "precioVenta": 300
+      "precioVenta": 300,
+      "imagen":"template-2710535_1280.jpg",
+      "cantidad":7
     },
     {
       "id": "2",
       "nombre": "Camisilla",
       "idCategoria": "1",
-      "precioVenta": 500
+      "precioVenta": 500,
+      "imagen":"template-2710535_1280.jpg",
+      "cantidad":5
     },
     {
       "id": "3",
       "nombre": "Atun",
       "idCategoria": "3",
-      "precioVenta": 5000
+      "precioVenta": 5000,
+      "imagen":"pexels-towfiqu-barbhuiya-3440682-12001951.jpg",
+      "cantidad":8
     },
     {
       "id": "4",
       "nombre": "Pantalón",
       "idCategoria": "1",
-      "precioVenta": 700
+      "precioVenta": 700,
+      "imagen":"pexels-pixabay-65676.jpg",
+      "cantidad":8
     },
     {
       "id": "5",
       "nombre": "Cerveza",
       "idCategoria": "2",
-      "precioVenta": 200
+      "precioVenta": 200,
+      "imagen":"pexels-enginakyurt-1672304.jpg",
+      "cantidad":5
     },
     {
       "id": "6",
       "nombre": "Vino",
       "idCategoria": "2",
-      "precioVenta": 1500
+      "precioVenta": 1500,
+      "imagen":"pexels-bernyce-hollingworth-916019-2702805.jpg",
+      "cantidad":5
     },
     {
       "id": "7",
       "nombre": "gaseosa",
       "idCategoria": "2",
-      "precioVenta": 10000
+      "precioVenta": 10000,
+      "imagen":"pexels-donaldtong94-39720.jpg",
+      "cantidad":5
     },
     {
       "nombre": "caramelos",
       "idCategoria": "4",
       "precioVenta": 10005,
-      "id": "8"
+      "id": "8",
+      "imagen":"pexels-nietjuh-1906435.jpg",
+      "cantidad":5
     },
     {
       "id": "9",
       "nombre": "Parlantes",
       "idCategoria": "6",
-      "precioVenta": 140000
+      "precioVenta": 140000,
+      "imagen":"pexels-pixabay-373638.jpg",
+      "cantidad":5
     },
     {
       "id": "10",
       "nombre": "Choclo",
       "idCategoria": "3",
-      "precioVenta": 400
+      "precioVenta": 400,
+      "imagen":"pexels-pixabay-373638.jpg",
+      "cantidad":5
     }
   ],
   "clientes": [
