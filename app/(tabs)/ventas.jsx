@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Modal ,SafeAreaView} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Modal, SafeAreaView } from 'react-native';
 import { getVentasFiltrado, getClientesFiltrado, getProductos, getClientes } from '../../components/api';
 import ModalView from '../../components/ModalView';
 import { Surface, Title, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import MapView, { Marker } from 'react-native-maps';
+import { Picker } from '@react-native-picker/picker';
 
 const Ventas = () => {
   // set_states de componentes (idk que son realmente)
@@ -21,6 +23,8 @@ const Ventas = () => {
   const [detalleVentaVisible, setDetalleVentaVisible] = useState(false);
   const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
   const [productos, setProductos] = useState([]);
+  const [filtroTipoVenta, setFiltroTipoVenta] = useState(null);
+
 
   /* 
     ======================================================
@@ -32,11 +36,12 @@ const Ventas = () => {
   // get ventas
   useEffect(() => {
     const fetchVentas = async () => {
-      const data = await getVentasFiltrado(filtroFechaDesde, filtroFechaHasta, filtroCliente);
+      const data = await getVentasFiltrado(filtroFechaDesde, filtroFechaHasta, filtroCliente, filtroTipoVenta);
       setVentas(data);
     };
     fetchVentas();
-  }, [filtroFechaDesde, filtroFechaHasta, filtroCliente]);
+  }, [filtroFechaDesde, filtroFechaHasta, filtroCliente, filtroTipoVenta]);
+
 
   // get clientes
   useEffect(() => {
@@ -159,6 +164,21 @@ const Ventas = () => {
 
       <View style={styles.espace_05} />
 
+      <View style={styles.center}>
+        <Text className="font-fsemibold">Filtrar por tipo de venta:</Text>
+        <Picker
+          selectedValue={filtroTipoVenta}
+          style={{ height: 50, width: 150 }}
+          onValueChange={(itemValue) => {
+            setFiltroTipoVenta(itemValue);
+          }}
+        >
+          <Picker.Item label="Todos" value={null} />
+          <Picker.Item label="Pickup" value="pickup" />
+          <Picker.Item label="Delivery" value="delivery" />
+        </Picker>
+      </View>
+
       {/* Seleccion del cliente */}
       <View className="ml-6 mr-6">
         <Button
@@ -181,20 +201,20 @@ const Ventas = () => {
           label="Nombre"
           value={nombre}
           onChangeText={setNombre}
-          style={{ marginBottom: 10 , backgroundColor: '#fce7f3'}}
+          style={{ marginBottom: 10, backgroundColor: '#fce7f3' }}
         />
 
         <TextInput
           label="Apellido"
           value={apellido}
           onChangeText={setApellido}
-          style={{ marginBottom: 10 , backgroundColor: '#fce7f3' }}
+          style={{ marginBottom: 10, backgroundColor: '#fce7f3' }}
         />
         <TextInput
           label="Cédula"
           value={cedula}
           onChangeText={setCedula}
-          style={{ marginBottom: 10 , backgroundColor: '#fce7f3'}}
+          style={{ marginBottom: 10, backgroundColor: '#fce7f3' }}
         />
         <Button
           color={'#ec4899'}
@@ -220,9 +240,9 @@ const Ventas = () => {
             setFiltroFechaHasta(null);
             setFiltroCliente(null);
             setNombre(null);
-            setApellido(null);
+            const data = await getVentasFiltrado(null, null, null, null);
             setCedula(null);
-            const data = await getVentasFiltrado(null, null, null);
+            setFiltroTipoVenta(null);
             setVentas(data);
           }}
         />
@@ -237,7 +257,7 @@ const Ventas = () => {
           data={ventas}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
-            const cliente = clientes.find(cliente => cliente.id == item.idCliente);
+            const cliente = clientes.find(cliente => cliente.id === item.idCliente);
             return (
               <TouchableOpacity onPress={() => handleSeleccionarVenta(item)}>
                 <View className="mr-4 ml-4" style={styles.ventaItem}>
@@ -261,10 +281,32 @@ const Ventas = () => {
           <View className="m-4" style={styles.container}>
             <Text className="font-fsemibold" style={styles.title}>Detalle de Venta</Text>
             <View className="mr-2 ml-2 flex-col">
-            <Text className="font-fregular" >Cliente: {clientes.find(cliente => cliente.id === ventaSeleccionada.idCliente)?.nombre} {clientes.find(cliente => cliente.id === ventaSeleccionada.idCliente)?.apellido}</Text>
+              <Text className="font-fregular" >Cliente: {clientes.find(cliente => cliente.id === ventaSeleccionada.idCliente)?.nombre} {clientes.find(cliente => cliente.id === ventaSeleccionada.idCliente)?.apellido}</Text>
+              <Text className="font-fregular">Tipo: {ventaSeleccionada.tipoOperacion}</Text>
               <Text className="font-fregular">Fecha: {ventaSeleccionada.fecha}</Text>
               <Text className="font-fregular">Total: Gs {ventaSeleccionada.total}</Text>
             </View>
+            {ventaSeleccionada.tipoOperacion === 'delivery' && ventaSeleccionada.direccionEntrega && (
+              <View style={{ height: 300, marginVertical: 10 }}>
+                <MapView
+                  style={{ flex: 1 }}
+                  initialRegion={{
+                    latitude: ventaSeleccionada.ubicacionMapa.latitud,
+                    longitude: ventaSeleccionada.ubicacionMapa.longitud,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }}
+                >
+                  <Marker
+                    coordinate={{
+                      latitude: ventaSeleccionada.ubicacionMapa.latitud,
+                      longitude: ventaSeleccionada.ubicacionMapa.longitud,
+                    }}
+                    title="Ubicación de entrega"
+                  />
+                </MapView>
+              </View>
+            )}
             <View style={{ borderBottomColor: '#ddd', borderBottomWidth: 1 }} />
             {/* Lista de productos comprados */}
             <FlatList
