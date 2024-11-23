@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, SafeAreaView, Modal, StyleSheet, Button } from 'react-native';
 import { Surface, Title } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
 import Carrito from '../../components/Carrito';
 import ItemVentas from '../../components/ItemVentas';
 import { db_ip } from '@env';
-
+import { Ionicons } from '@expo/vector-icons';
 
 const API_BASE_URL = `http://${db_ip}:3000`;
 
@@ -18,8 +17,9 @@ const Home = () => {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   const [cliente, setCliente] = useState({ cedula: '', nombre: '', apellido: '' });
   const [isCarritoVisible, setIsCarritoVisible] = useState(false);
-  const [isClienteModalVisible, setIsClienteModalVisible] = useState(false); // Nuevo estado para el modal de cliente
-
+  const [isClienteModalVisible, setIsClienteModalVisible] = useState(false);
+  const [isCategoriaModalVisible, setIsCategoriaModalVisible] = useState(false);
+  const [imagen, setImagen] = useState('');
   useEffect(() => {
     getProductos();
     getCategorias();
@@ -36,6 +36,21 @@ const Home = () => {
     }
   };
 
+  const actualizarInventario = async (idProducto, nuevaCantidad) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/productos/${idProducto}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cantidadDisponible: nuevaCantidad }),
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar el inventario');
+      }
+    } catch (error) {
+      console.error('Error actualizando inventario:', error);
+    }
+  };
+  
   const getCategorias = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/categorias`);
@@ -52,21 +67,36 @@ const Home = () => {
       const matchesCategory = !categoriaSeleccionada || item.idCategoria.toString() === categoriaSeleccionada.toString();
       return matchesSearchQuery && matchesCategory;
     });
-    getProductos();
     setFilteredProductos(filteredData);
   }, [searchQuery, categoriaSeleccionada, productos]);
 
   const agregarAlCarrito = (producto) => {
     const productoEnCarrito = carrito.find((item) => item.id === producto.id);
-    if (productoEnCarrito) {
-      setCarrito(carrito.map((item) =>
-        item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
-      ));
+    const cantidadEnCarrito = productoEnCarrito ? productoEnCarrito.cantidad : 0;
+  
+    if (producto.cantidadDisponible > cantidadEnCarrito) {
+      // Si hay suficiente inventario, agregar al carrito
+      if (productoEnCarrito) {
+        setCarrito(
+          carrito.map((item) =>
+            item.id === producto.id
+              ? { ...item, cantidad: item.cantidad + 1 }
+              : item
+          )
+        );
+      } else {
+        setCarrito([
+          ...carrito,
+          { ...producto, cantidad: 1, precioVenta: producto.precioVenta },
+        ]);
+      }
     } else {
-      setCarrito([...carrito, { ...producto, cantidad: 1, precioVenta: producto.precioVenta }]);
+      // Si no hay suficiente inventario, mostrar un mensaje de alerta
+      alert(
+        `No hay suficiente inventario para agregar más unidades del producto: ${producto.nombre}`
+      );
     }
   };
-
   const eliminarDelCarrito = (producto) => {
     const productoEnCarrito = carrito.find((item) => item.id === producto.id);
     
@@ -162,6 +192,11 @@ const Home = () => {
       });
 
       if (response.ok) {
+        // para la cantidad
+        for (const item of carrito) {
+          const nuevoInventario = item.cantidadDisponible - item.cantidad;
+          await actualizarInventario(item.id, nuevoInventario);
+        }
         console.log("Orden registrada exitosamente");
         alert("¡Compra realizada exitosamente!");
 
@@ -192,33 +227,35 @@ const Home = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <Picker
-          selectedValue={categoriaSeleccionada}
-          onValueChange={(value) => setCategoriaSeleccionada(value)}
-          style={styles.picker}
+        <TouchableOpacity
+          style={styles.categoriaButton}
+          onPress={() => setIsCategoriaModalVisible(true)}
         >
-          <Picker.Item label="Todas las categorías" value="" />
-          {categorias.map((cat) => (
-            <Picker.Item key={cat.id} label={cat.nombre} value={cat.id} />
-          ))}
-        </Picker>
+          <Text style={styles.categoriaButtonText}>
+            {categoriaSeleccionada
+              ? `Filtrar: ${categorias.find((cat) => cat.id === categoriaSeleccionada)?.nombre || "Todas las categorías"}`
+              : "Filtrar por categoría"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <FlatList
-        style={{ marginBottom: 10 }}
-        data={filteredProductos}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <ItemVentas
-            className="font-fsemibold text-pink-500"
-            nombre={item.nombre}
-            categoria={categorias.find((cat) => cat.id === item.idCategoria)?.nombre || "Sin categoría"}
-            precioVenta={item.precioVenta}
-            onAgregarAlCarrito={() => agregarAlCarrito(item)}
-          />
-        )}
-        ListEmptyComponent={<Text className="font-fsemibold" style={styles.emptyText}>No hay productos disponibles</Text>}
-      />
+      style={{ marginBottom: 10 }}
+      data={filteredProductos}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <ItemVentas
+          nombre={item.nombre}
+          categoria={categorias.find((cat) => cat.id === item.idCategoria)?.nombre || "Sin categoría"}
+          precioVenta={item.precioVenta}
+          imagen={item.imagen} // Nuevo campo para la imagen
+          onAgregarAlCarrito={() => agregarAlCarrito(item)}
+          deshabilitado={item.cantidadDisponible <= 0}
+        />
+      )}
+      ListEmptyComponent={<Text className="font-fsemibold" style={styles.emptyText}>No hay productos disponibles</Text>}
+    />
+
 
       <TouchableOpacity style={styles.carritoButton} onPress={() => setIsCarritoVisible(true)}>
         <Text className="font-fsemibold" style={styles.carritoButtonText}>Ver Carrito ({carrito.length})</Text>
@@ -234,6 +271,37 @@ const Home = () => {
         }}
         onEliminarDelCarrito={eliminarDelCarrito}
       />
+      
+      {/* Modal para seleccionar categorías */}
+      <Modal
+        visible={isCategoriaModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsCategoriaModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Categoría</Text>
+            <FlatList
+              data={[{ id: '', nombre: 'Todas las categorías', icono: 'apps' }, ...categorias]}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.categoriaOption}
+                  onPress={() => {
+                    setCategoriaSeleccionada(item.id);
+                    setIsCategoriaModalVisible(false);
+                  }}
+                >
+                  <Ionicons name={item.icono} size={20} color="#000" style={styles.icon} />
+                  <Text style={styles.categoriaOptionText}>{item.nombre}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <Button title="Cerrar" onPress={() => setIsCategoriaModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
 
       {/* Modal para capturar datos del cliente */}
       <Modal
@@ -359,6 +427,11 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
   },
+  categoriaOption: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  categoriaOptionText: { marginLeft: 10 },
+  icon: { marginRight: 10 },
+  categoriaButton: { backgroundColor: '#f3f4f6', padding: 10, borderRadius: 8 },
+  categoriaButtonText: { color: '#374151', fontWeight: 'bold' },
 });
 
 export default Home;
