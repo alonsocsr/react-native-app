@@ -73,7 +73,7 @@ const Home = () => {
   const agregarAlCarrito = (producto) => {
     const productoEnCarrito = carrito.find((item) => item.id === producto.id);
     const cantidadEnCarrito = productoEnCarrito ? productoEnCarrito.cantidad : 0;
-  
+
     if (producto.cantidadDisponible > cantidadEnCarrito) {
       // Si hay suficiente inventario, agregar al carrito
       if (productoEnCarrito) {
@@ -99,7 +99,7 @@ const Home = () => {
   };
   const eliminarDelCarrito = (producto) => {
     const productoEnCarrito = carrito.find((item) => item.id === producto.id);
-    
+
     if (productoEnCarrito) {
       if (productoEnCarrito.cantidad > 1) {
         setCarrito(
@@ -121,14 +121,32 @@ const Home = () => {
     const ultimoId = clientes.length > 0 ? Math.max(...clientes.map(cliente => parseInt(cliente.id))) : 0;
     return (ultimoId + 1).toString();
   };
-  
+
+  const getClienteBuscado = async () => {
+    if (cliente.cedula.trim() === '') {
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/clientes?cedula=${cliente.cedula}`);
+      const data = await response.json();
+      if (data.length > 0) {
+        setCliente(data[0]);
+      } else {
+        setCliente({ ...cliente, nombre: 'No encontrado', apellido: '' });
+      }
+    } catch (error) {
+      console.error("Error al buscar cliente:", error);
+      alert("Error al buscar cliente");
+    }
+  };
+
   const verificarYRegistrarCliente = async () => {
     try {
       const isCedulaEmpty = cliente.cedula.trim() === '';
       const isNombreEmpty = cliente.nombre.trim() === '';
       const isApellidoEmpty = cliente.apellido.trim() === '';
       const isClienteDataValid = !isCedulaEmpty && !isNombreEmpty && !isApellidoEmpty;
-      if (!isClienteDataValid){
+      if (!isClienteDataValid) {
         // Los datos no son validos si no se completo algun campo, se retorna null
         return null;
       }
@@ -164,15 +182,16 @@ const Home = () => {
       return;
     }
 
-  const obtenerNuevoId = async () => {
-    const response = await fetch(`${API_BASE_URL}/ventas`);
-    const ventas = await response.json();
-    const ultimoId = ventas.length > 0 ? Math.max(...ventas.map(venta => parseInt(venta.id))) : 0;
-    return (ultimoId + 1).toString();
-  };
+    const obtenerNuevoId = async () => {
+      const response = await fetch(`${API_BASE_URL}/ventas`);
+      const ventas = await response.json();
+      const ultimoId = ventas.length > 0 ? Math.max(...ventas.map(venta => parseInt(venta.id))) : 0;
+      return (ultimoId + 1).toString();
+    };
 
     try {
       const nuevoId = await obtenerNuevoId();
+      const tipoOperacion = 'delivery'; // Define tipoOperacion variable
       const orden = {
         id: nuevoId,
         idCliente: idCliente,
@@ -182,6 +201,10 @@ const Home = () => {
           cantidad: item.cantidad,
           precio: item.precioVenta,
         })),
+        // aqui se cargaran los datos del tipo de pedido
+        tipoOperacion: tipoOperacion, // Use the defined variable
+        direccionEntrega: tipoOperacion === 'delivery' ? 'Calle 123, Ciudad' : undefined,
+        ubicacionMapa: tipoOperacion === 'delivery' ? { latitud: -34.603722, longitud: -58.381592 } : undefined,
         total: carrito.reduce((total, item) => total + item.cantidad * item.precioVenta, 0),
       };
 
@@ -199,6 +222,9 @@ const Home = () => {
         }
         console.log("Orden registrada exitosamente");
         alert("¡Compra realizada exitosamente!");
+
+        // actualizar el home de articulos
+        getProductos();
 
         // Vaciar el carrito y limpiar los datos del cliente
         setCarrito([]);
@@ -240,21 +266,21 @@ const Home = () => {
       </View>
 
       <FlatList
-      style={{ marginBottom: 10 }}
-      data={filteredProductos}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <ItemVentas
-          nombre={item.nombre}
-          categoria={categorias.find((cat) => cat.id === item.idCategoria)?.nombre || "Sin categoría"}
-          precioVenta={item.precioVenta}
-          imagen={item.imagen} // Nuevo campo para la imagen
-          onAgregarAlCarrito={() => agregarAlCarrito(item)}
-          deshabilitado={item.cantidadDisponible <= 0}
-        />
-      )}
-      ListEmptyComponent={<Text className="font-fsemibold" style={styles.emptyText}>No hay productos disponibles</Text>}
-    />
+        style={{ marginBottom: 10 }}
+        data={filteredProductos}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <ItemVentas
+            nombre={item.nombre}
+            categoria={categorias.find((cat) => cat.id === item.idCategoria)?.nombre || "Sin categoría"}
+            precioVenta={item.precioVenta}
+            imagen={item.imagen} // Nuevo campo para la imagen
+            onAgregarAlCarrito={() => agregarAlCarrito(item)}
+            deshabilitado={item.cantidadDisponible <= 0}
+          />
+        )}
+        ListEmptyComponent={<Text className="font-fsemibold" style={styles.emptyText}>No hay productos disponibles</Text>}
+      />
 
 
       <TouchableOpacity style={styles.carritoButton} onPress={() => setIsCarritoVisible(true)}>
@@ -271,7 +297,7 @@ const Home = () => {
         }}
         onEliminarDelCarrito={eliminarDelCarrito}
       />
-      
+
       {/* Modal para seleccionar categorías */}
       <Modal
         visible={isCategoriaModalVisible}
@@ -312,14 +338,22 @@ const Home = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text  style={styles.modalTitle}>Información del Cliente</Text>
-            <TextInput
-              className="font-fregular"
-              style={styles.input}
-              placeholder="Cédula"
-              value={cliente.cedula}
-              onChangeText={(text) => setCliente({ ...cliente, cedula: text })}
-            />
+            <Text style={styles.modalTitle}>Información del Cliente</Text>
+            <View style={styles.row}>
+              <TextInput
+                className="font-fregular"
+                style={styles.input}
+                placeholder="Cédula"
+                value={cliente.cedula}
+                onChangeText={(text) => setCliente({ ...cliente, cedula: text })}
+              />
+              <TouchableOpacity
+                onPress={async () => getClienteBuscado()}
+                style={{ marginLeft: 10 }}
+              >
+                <Ionicons name="search" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
             <TextInput
               className="font-fregular"
               style={styles.input}
@@ -432,6 +466,7 @@ const styles = StyleSheet.create({
   icon: { marginRight: 10 },
   categoriaButton: { backgroundColor: '#f3f4f6', padding: 10, borderRadius: 8 },
   categoriaButtonText: { color: '#374151', fontWeight: 'bold' },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
 });
 
 export default Home;

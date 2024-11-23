@@ -160,24 +160,23 @@ const Ventas = () => {
             )}
           </View>
         )}
+        <View style={styles.row}>
+          <Text className="font-fsemibold">Filtrar por tipo de venta:</Text>
+          <Picker
+            selectedValue={filtroTipoVenta}
+            style={{ height: 50, width: 150 }}
+            onValueChange={(itemValue) => {
+              setFiltroTipoVenta(itemValue);
+            }}
+          >
+            <Picker.Item label="Todos" value={null} />
+            <Picker.Item label="Pickup" value="pickup" />
+            <Picker.Item label="Delivery" value="delivery" />
+          </Picker>
+        </View>
       </View>
 
       <View style={styles.espace_05} />
-
-      <View style={styles.center}>
-        <Text className="font-fsemibold">Filtrar por tipo de venta:</Text>
-        <Picker
-          selectedValue={filtroTipoVenta}
-          style={{ height: 50, width: 150 }}
-          onValueChange={(itemValue) => {
-            setFiltroTipoVenta(itemValue);
-          }}
-        >
-          <Picker.Item label="Todos" value={null} />
-          <Picker.Item label="Pickup" value="pickup" />
-          <Picker.Item label="Delivery" value="delivery" />
-        </Picker>
-      </View>
 
       {/* Seleccion del cliente */}
       <View className="ml-6 mr-6">
@@ -257,7 +256,7 @@ const Ventas = () => {
           data={ventas}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
-            const cliente = clientes.find(cliente => cliente.id === item.idCliente);
+            const cliente = clientes.find(cliente => cliente.id === item.idCliente.toString());
             return (
               <TouchableOpacity onPress={() => handleSeleccionarVenta(item)}>
                 <View className="mr-4 ml-4" style={styles.ventaItem}>
