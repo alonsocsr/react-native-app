@@ -31,7 +31,7 @@
       "nombre": "Remera",
       "idCategoria": "1",
       "precioVenta": 300,
-      "cantidadDisponible": 4,
+      "cantidadDisponible": 3,
       "id": "1"
     },
     {
@@ -48,7 +48,7 @@
       "idCategoria": "3",
       "precioVenta": 5000,
       "imagen": "pexels-towfiqu-barbhuiya-3440682-12001951.jpg",
-      "cantidadDisponible": 2
+      "cantidadDisponible": 0
     },
     {
       "id": "4",
@@ -253,8 +253,8 @@
       "tipoOperacion": "delivery",
       "direccionEntrega": "Calle 123, Ciudad",
       "ubicacionMapa": {
-        "latitud": -34.603722,
-        "longitud": -58.381592
+        "latitude": -34.603722,
+        "longitude": -58.381592
       },
       "total": 15000
     },
@@ -272,8 +272,8 @@
       "tipoOperacion": "delivery",
       "direccionEntrega": "Calle 123, Ciudad",
       "ubicacionMapa": {
-        "latitud": -34.603722,
-        "longitud": -58.381592
+        "latitude": -34.603722,
+        "longitude": -58.381592
       },
       "total": 1000
     },
@@ -291,8 +291,8 @@
       "tipoOperacion": "delivery",
       "direccionEntrega": "Calle 123, Ciudad",
       "ubicacionMapa": {
-        "latitud": -34.603722,
-        "longitud": -58.381592
+        "latitude": -34.603722,
+        "longitude": -58.381592
       },
       "total": 1000
     },
@@ -310,8 +310,8 @@
       "tipoOperacion": "delivery",
       "direccionEntrega": "Calle 123, Ciudad",
       "ubicacionMapa": {
-        "latitud": -34.603722,
-        "longitud": -58.381592
+        "latitude": -34.603722,
+        "longitude": -58.381592
       },
       "total": 2000
     },
@@ -329,8 +329,8 @@
       "tipoOperacion": "delivery",
       "direccionEntrega": "Calle 123, Ciudad",
       "ubicacionMapa": {
-        "latitud": -34.603722,
-        "longitud": -58.381592
+        "latitude": -34.603722,
+        "longitude": -58.381592
       },
       "total": 2000
     },
@@ -348,10 +348,29 @@
       "tipoOperacion": "delivery",
       "direccionEntrega": "Calle 123, Ciudad",
       "ubicacionMapa": {
-        "latitud": -34.603722,
-        "longitud": -58.381592
+        "latitude": -34.603722,
+        "longitude": -58.381592
       },
       "total": 5000
+    },
+    {
+      "id": "20",
+      "idCliente": "12",
+      "fecha": "2024-11-23",
+      "detalle": [
+        {
+          "idProducto": "1",
+          "cantidad": 1,
+          "precio": 300
+        }
+      ],
+      "tipoOperacion": "delivery",
+      "direccionEntrega": "direccionEntrega",
+      "ubicacionMapa": {
+        "latitude": -25.374431696156133,
+        "longitude": -57.3907471820712
+      },
+      "total": 300
     }
   ]
 }

@@ -5,6 +5,8 @@ import Carrito from '../../components/Carrito';
 import ItemVentas from '../../components/ItemVentas';
 import { db_ip } from '@env';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 const API_BASE_URL = `http://${db_ip}:3000`;
 
@@ -19,6 +21,42 @@ const Home = () => {
   const [isCarritoVisible, setIsCarritoVisible] = useState(false);
   const [isClienteModalVisible, setIsClienteModalVisible] = useState(false);
   const [isCategoriaModalVisible, setIsCategoriaModalVisible] = useState(false);
+
+  const [tipoOperacion, setTipoOperacion] = useState(null);
+  const [isMapVisible, setIsMapVisible] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [initialRegion, setInitialRegion] = useState({
+    latitude: -25.3,
+    longitude: -57.633333,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  const getCurrentLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Se rechazó el acceso a la ubicación.');
+        return;
+      }
+    
+      const location = await Location.getCurrentPositionAsync({});
+      setInitialRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+      setSelectedLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    } catch (error) {
+      console.error("Error obteniendo ubicación actual:", error);
+      alert("No se pudo obtener la ubicación actual. Intenta nuevamente.");
+    }
+  };
+
   const [imagen, setImagen] = useState('');
   useEffect(() => {
     getProductos();
@@ -159,7 +197,7 @@ const Home = () => {
       } else {
         // Cliente no existe, créalo
         const nuevoId = await obtenerNuevoIdCliente();
-        body = JSON.stringify({ ...cliente, id: nuevoId });
+        let body = JSON.stringify({ ...cliente, id: nuevoId });
         const nuevoClienteResponse = await fetch(`${API_BASE_URL}/clientes`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -174,6 +212,24 @@ const Home = () => {
     }
   };
 
+
+  const handleOptionSelect = (tipo) => {
+    setTipoOperacion(tipo);
+  };
+
+  const handleOpenMap = () => {
+    setIsMapVisible(true);
+  };
+
+  const handleCloseMap = () => {
+    setIsMapVisible(false);
+  };
+
+  const handleConfirmLocation = (location) => {
+    setSelectedLocation(location);
+    setIsMapVisible(false);
+    console.log("Location selected:", location); // Process the location as needed
+  };
 
   const finalizarOrden = async () => {
     const idCliente = await verificarYRegistrarCliente();
@@ -191,7 +247,6 @@ const Home = () => {
 
     try {
       const nuevoId = await obtenerNuevoId();
-      const tipoOperacion = 'delivery'; // Define tipoOperacion variable
       const orden = {
         id: nuevoId,
         idCliente: idCliente,
@@ -202,9 +257,9 @@ const Home = () => {
           precio: item.precioVenta,
         })),
         // aqui se cargaran los datos del tipo de pedido
-        tipoOperacion: tipoOperacion, // Use the defined variable
-        direccionEntrega: tipoOperacion === 'delivery' ? 'Calle 123, Ciudad' : undefined,
-        ubicacionMapa: tipoOperacion === 'delivery' ? { latitud: -34.603722, longitud: -58.381592 } : undefined,
+        tipoOperacion: tipoOperacion, 
+        direccionEntrega: "direccionEntrega",
+        ubicacionMapa: selectedLocation,
         total: carrito.reduce((total, item) => total + item.cantidad * item.precioVenta, 0),
       };
 
@@ -368,6 +423,20 @@ const Home = () => {
               value={cliente.apellido}
               onChangeText={(text) => setCliente({ ...cliente, apellido: text })}
             />
+            {/* seleccionar orden */}
+             <Text className="font-pregular text-gray-700 text-lg">Selecciona el tipo de orden</Text>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => handleOptionSelect('pickup')}
+            >
+              <Text style={styles.optionText}>Pickup</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => {handleOptionSelect('delivery'); handleOpenMap(); }}
+            >
+              <Text style={styles.optionText}>Delivery</Text>
+            </TouchableOpacity>
             <View style={styles.buttonContainer}>
               <Button color={'#ff0000'} title="Cancelar" onPress={() => setIsClienteModalVisible(false)} />
               <Button
@@ -382,6 +451,33 @@ const Home = () => {
           </View>
         </View>
       </Modal>
+
+      {/* ubicacion */}
+      <Modal
+        visible={isMapVisible}
+        animationType="slide"
+        onRequestClose={handleCloseMap}
+      >
+        <View style={{ flex: 1 }}>
+          <MapView
+            style={{ flex: 1 }}
+            onPress={(event) => setSelectedLocation(event.nativeEvent.coordinate)}
+            initialRegion={initialRegion}
+          >
+            {selectedLocation && (
+              <Marker coordinate={selectedLocation} title="Selected Location" />
+            )}
+          </MapView>
+          <View 
+            style={{ flex: 1 }}
+          >
+            <Button title="Obtener ubicación actual" onPress={getCurrentLocation} />
+            <Button title="Confirmar" onPress={() => handleConfirmLocation(selectedLocation)} />
+            <Button title="Cerrar" onPress={handleCloseMap} />
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };
@@ -467,6 +563,18 @@ const styles = StyleSheet.create({
   categoriaButton: { backgroundColor: '#f3f4f6', padding: 10, borderRadius: 8 },
   categoriaButtonText: { color: '#374151', fontWeight: 'bold' },
   row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  optionButton: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  optionText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default Home;
