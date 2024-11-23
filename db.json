@@ -3,107 +3,110 @@
     {
       "id": "1",
       "nombre": "Ropas",
-      "icono": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "icono": "shirt"
     },
     {
       "id": "2",
       "nombre": "Bebidas",
-      "icono": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "icono": "wine"
     },
     {
       "id": "3",
       "nombre": "Enlatados",
-      "icono": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "icono": "attach-sharp"
     },
     {
       "id": "4",
       "nombre": "Dulces",
-      "icono": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "icono": "beaker"
     },
     {
       "id": "6",
       "nombre": "Tecnologias",
-      "icono": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "id": "6",
+      "icono": "cellular"
     }
   ],
   "productos": [
     {
-      "id": "1",
       "nombre": "Remera",
       "idCategoria": "1",
       "precioVenta": 300,
-      "cantidadDisponible": 100,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "cantidadDisponible": 4,
+      "id": "1"
     },
     {
       "id": "2",
       "nombre": "Camisilla",
       "idCategoria": "1",
       "precioVenta": 500,
-      "cantidadDisponible": 50,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "imagen": "template-2710535_1280.jpg",
+      "cantidadDisponible": 4
     },
     {
       "id": "3",
       "nombre": "Atun",
       "idCategoria": "3",
       "precioVenta": 5000,
-      "cantidadDisponible": 30,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "imagen": "pexels-towfiqu-barbhuiya-3440682-12001951.jpg",
+      "cantidadDisponible": 3
     },
     {
       "id": "4",
       "nombre": "Pantalón",
       "idCategoria": "1",
       "precioVenta": 700,
-      "cantidadDisponible": 20,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "imagen": "pexels-pixabay-65676.jpg",
+      "cantidadDisponible": 8
     },
     {
       "id": "5",
       "nombre": "Cerveza",
       "idCategoria": "2",
       "precioVenta": 200,
-      "cantidadDisponible": 80,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "imagen": "pexels-enginakyurt-1672304.jpg",
+      "cantidadDisponible": 5
     },
     {
       "id": "6",
       "nombre": "Vino",
       "idCategoria": "2",
       "precioVenta": 1500,
-      "cantidadDisponible": 40,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "imagen": "pexels-bernyce-hollingworth-916019-2702805.jpg",
+      "cantidadDisponible": 0
     },
     {
       "id": "7",
       "nombre": "Gaseosa",
       "idCategoria": "2",
       "precioVenta": 10000,
-      "cantidadDisponible": 10,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "imagen": "pexels-donaldtong94-39720.jpg",
+      "cantidadDisponible": 5
     },
     {
       "id": "8",
       "nombre": "Caramelos",
       "idCategoria": "4",
       "precioVenta": 10005,
-      "cantidadDisponible": 200,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "id": "8",
+      "imagen": "pexels-nietjuh-1906435.jpg",
+      "cantidadDisponible": 5
     },
     {
       "id": "9",
       "nombre": "Parlantes",
       "idCategoria": "6",
       "precioVenta": 140000,
-      "cantidadDisponible": 15,
-      "imagen": "https://codigogenesis.com/genesis/2022/04/imagen-placeholder-por-defecto-WooCommerce.png"
+      "imagen": "pexels-pixabay-373638.jpg",
+      "cantidadDisponible": 5
     },
     {
       "id": "10",
       "nombre": "Choclo",
       "idCategoria": "3",
-      "precioVenta": 400
+      "precioVenta": 400,
+      "imagen": "pexels-pixabay-373638.jpg",
+      "cantidadDisponible": 5
     }
   ],
   "clientes": [
@@ -136,6 +139,42 @@
       "cedula": "1234567",
       "nombre": "Majito",
       "apellido": "Mendoza"
+    },
+    {
+      "id": "6",
+      "cedula": "19940201",
+      "nombre": "Harry",
+      "apellido": "Syles"
+    },
+    {
+      "id": "7",
+      "cedula": "123466",
+      "nombre": "Marcelo",
+      "apellido": "Tinelli"
+    },
+    {
+      "id": "8",
+      "cedula": "333444",
+      "nombre": "Norma",
+      "apellido": "Martinez"
+    },
+    {
+      "id": "9",
+      "cedula": "112233",
+      "nombre": "Florencia",
+      "apellido": "Florida"
+    },
+    {
+      "id": "10",
+      "cedula": "1011002",
+      "nombre": "Fabrisio",
+      "apellido": "Cano"
+    },
+    {
+      "id": "11",
+      "cedula": "090911",
+      "nombre": "Cesar",
+      "apellido": "Alonso"
     }
   ],
   "ventas": [
@@ -194,7 +233,95 @@
           "precio": 400
         }
       ],
-      "total": 140400
+      "total": 140000
+    },
+    {
+      "id": "12",
+      "idCliente": "6",
+      "fecha": "2024-11-22",
+      "detalle": [
+        {
+          "idProducto": "8",
+          "cantidad": 1,
+          "precio": 10005
+        },
+        {
+          "idProducto": "9",
+          "cantidad": 1,
+          "precio": 140000
+        }
+      ],
+      "total": 150005
+    },
+    {
+      "id": "13",
+      "idCliente": "7",
+      "fecha": "2024-11-22",
+      "detalle": [
+        {
+          "idProducto": "4",
+          "cantidad": 1,
+          "precio": 700
+        }
+      ],
+      "total": 700
+    },
+    {
+      "id": "14",
+      "idCliente": "8",
+      "fecha": "2024-11-22",
+      "detalle": [
+        {
+          "idProducto": "1",
+          "cantidad": 1,
+          "precio": 300
+        },
+        {
+          "idProducto": "8",
+          "cantidad": 2,
+          "precio": 10005
+        }
+      ],
+      "total": 20310
+    },
+    {
+      "id": "15",
+      "idCliente": "1",
+      "fecha": "2024-11-22",
+      "detalle": [
+        {
+          "idProducto": "1",
+          "cantidad": 1,
+          "precio": 300
+        }
+      ],
+      "total": 300
+    },
+    {
+      "id": "16",
+      "idCliente": "10",
+      "fecha": "2024-11-22",
+      "detalle": [
+        {
+          "idProducto": "3",
+          "cantidad": 5,
+          "precio": 5000
+        }
+      ],
+      "total": 25000
+    },
+    {
+      "id": "17",
+      "idCliente": "11",
+      "fecha": "2024-11-22",
+      "detalle": [
+        {
+          "idProducto": "6",
+          "cantidad": 5,
+          "precio": 1500
+        }
+      ],
+      "total": 7500
     }
   ]
 }

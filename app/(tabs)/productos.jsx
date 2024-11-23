@@ -7,7 +7,6 @@ import ItemsProd from '../../components/ItemsProd';
 import { Picker } from '@react-native-picker/picker';
 import { db_ip } from '@env';
 
-
 const Productos = () => {
   const [data, setData] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -19,23 +18,24 @@ const Productos = () => {
   const [loading, setLoading] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [imagen, setImagen] = useState('');
+  const [cantidadDisponible, setCantidadDisponible] = useState(0);
 
   const API_URL = `http://${db_ip}:3000/productos`;
   const CATEGORIAS_URL = `http://${db_ip}:3000/categorias`;
-
 
   const getProductos = async () => {
     setLoading(true);
     await fetch(API_URL)
       .then((response) => response.json())
       .then((response) => {
+        console.log(response)
         setData(response);
         setFilteredData(response);
       })
       .catch((e) => console.log(e));
     setLoading(false);
   };
-
 
   const getCategorias = async () => {
     await fetch(CATEGORIAS_URL)
@@ -58,27 +58,26 @@ const Productos = () => {
     }
   };
 
-  const agregarProducto = async (nombre, idCategoria, precioVenta) => {
-
-    if (!nombre.trim() || !idCategoria || precioVenta == null) {
-      
+  const agregarProducto = async (nombre, idCategoria, precioVenta, imagen, cantidadDisponible) => {
+    if (!nombre.trim() || !idCategoria || precioVenta == null || !imagen.trim() || cantidadDisponible == null) {
       alert('Todos los campos son obligatorios');
-      console.error('Todos los campos son obligatorios');
       return;
     }
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        "id": await obtenerNuevoIdProducto(),
-        "nombre": nombre,
-        "idCategoria": idCategoria,
-        "precioVenta": precioVenta
+        id: await obtenerNuevoIdProducto(),
+        nombre,
+        idCategoria,
+        precioVenta,
+        imagen,
+        cantidadDisponible
       }),
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log("producto creado", response)
+        console.log('Producto creado', response);
         actualizarProducto();
       })
       .catch((error) => console.error(error));
@@ -90,10 +89,11 @@ const Productos = () => {
     setNombre('');
     setIdProducto(0);
     setPrecioVenta(0);
+    setCantidadDisponible(0);
   };
 
-  const editarProducto = (idProducto, nombre, idCategoria, precioVenta) => {
-    if (!nombre || !idCategoria || !precioVenta) {
+  const editarProducto = (idProducto, nombre, idCategoria, precioVenta, cantidadDisponible) => {
+    if (!nombre || !idCategoria || !precioVenta || cantidadDisponible == null) {
       alert('Todos los campos son obligatorios');
       console.error('Todos los campos son obligatorios');
       return;
@@ -104,7 +104,8 @@ const Productos = () => {
       body: JSON.stringify({
         "nombre": nombre,
         "idCategoria": idCategoria,
-        "precioVenta": parseInt(precioVenta)
+        "precioVenta": parseInt(precioVenta),
+        "cantidadDisponible": parseInt(cantidadDisponible)
       })
     }).then((response) => response.json())
       .then((response) => {
@@ -113,14 +114,15 @@ const Productos = () => {
       }).catch((error) => console.error(error));
   };
 
-  const editar = (id, nombre, idCategoria, precio) => {
+  const editar = (id, nombre, idCategoria, precio, imagen, cantidad) => {
     setVisible(true);
     setIdProducto(id);
     setNombre(nombre);
-    setIdCategoria(idCategoria)
+    setIdCategoria(idCategoria);
     setPrecioVenta(precio.toString());
+    setImagen(imagen);
+    setCantidadDisponible(cantidad.toString());
   };
-
 
   const eliminarProducto = (idProducto) => {
     fetch(`${API_URL}/${idProducto}`, {
@@ -137,7 +139,7 @@ const Productos = () => {
       })
       .catch((error) => console.error(error));
   };
-  // Filtrar productos por nombre
+
   const buscadorFiltrado = (text) => {
     setSearchQuery(text);
     if (text) {
@@ -151,6 +153,7 @@ const Productos = () => {
       setFilteredData(data);
     }
   };
+
   useEffect(() => {
     getProductos();
     getCategorias();
@@ -187,7 +190,9 @@ const Productos = () => {
             nombre={item.nombre}
             categoria={categorias.find(cat => cat.id === item.idCategoria)?.nombre}
             precioVenta={item.precioVenta}
-            onEdit={() => editar(item.id, item.nombre, item.idCategoria, item.precioVenta)}
+            imagen={item.imagen}
+            cantidadDisponible={item.cantidadDisponible}
+            onEdit={() => editar(item.id, item.nombre, item.idCategoria, item.precioVenta, item.imagen, item.cantidadDisponible)}
             onDelete={() => eliminarProducto(item.id)}
           />
         )}
@@ -199,9 +204,9 @@ const Productos = () => {
         onDismiss={() => setVisible(false)}
         onSubmit={() => {
           if (idProducto !== 0) {
-            editarProducto(idProducto, nombre, idCategoria, precioVenta);
+            editarProducto(idProducto, nombre, idCategoria, precioVenta, cantidadDisponible);
           } else {
-            agregarProducto(nombre, idCategoria, precioVenta);
+            agregarProducto(nombre, idCategoria, precioVenta, imagen, cantidadDisponible);
           }
         }}
         cancelable
@@ -224,6 +229,19 @@ const Productos = () => {
           label="Precio de Venta"
           value={precioVenta}
           onChangeText={(text) => setPrecioVenta(parseFloat(text))}
+          keyboardType="numeric"
+          mode="outlined"
+        />
+        <TextInput
+          label="Imagen (nombre del archivo)"
+          value={imagen}
+          onChangeText={(text) => setImagen(text)}
+          mode="outlined"
+        />
+        <TextInput
+          label="Cantidad Disponible"
+          value={cantidadDisponible}
+          onChangeText={(text) => setCantidadDisponible(parseInt(text))}
           keyboardType="numeric"
           mode="outlined"
         />
@@ -271,4 +289,3 @@ const styles = StyleSheet.create({
 });
 
 export default Productos;
-

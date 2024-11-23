@@ -126,4 +126,23 @@ export const getClientesFiltrado = async (nombre, apellido, cedula) => {
     console.error('Error en el fetch de clientes:', error);
     return [];
   }
+
+
+
+
+};
+
+export const actualizarInventario = async (idProducto, nuevaCantidad) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/productos/${idProducto}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cantidad: nuevaCantidad }),
+    });
+    if (!response.ok) {
+      throw new Error('Error al actualizar el inventario');
+    }
+  } catch (error) {
+    console.error('Error actualizando inventario:', error);
+  }
 };

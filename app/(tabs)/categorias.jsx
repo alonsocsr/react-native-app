@@ -1,29 +1,33 @@
-import { StatusBar, } from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, Platform, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, Platform, View, Modal } from 'react-native';
 import { Surface, Title, TextInput } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 import ModalView from '../../components/ModalView';
 import Items from '../../components/Items';
 import { db_ip } from '@env';
-
 
 const Categorias = () => {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [nombre, setNombre] = useState('');
   const [idCategoria, setIdCategoria] = useState(0);
+  const [selectedIcon, setSelectedIcon] = useState('');
   const [loading, setLoading] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const [iconModalVisible, setIconModalVisible] = useState(false);
+
   const API_URL = `http://${db_ip}:3000/categorias`;
+  const iconOptions = Object.keys(Ionicons.glyphMap);
+
   const getCategorias = async () => {
     setLoading(true);
     await fetch(API_URL)
       .then((response) => response.json())
       .then((response) => {
         setData(response);
-        setFilteredData(response)
+        setFilteredData(response);
       })
       .catch((e) => console.log(e));
     setLoading(false);
@@ -41,22 +45,26 @@ const Categorias = () => {
     }
   };
 
-  const agregarCategoria = async (nombre) => {
+  const agregarCategoria = async (nombre, icono) => {
     if (!nombre.trim()) {
       alert('El nombre de la categoría no puede estar vacío.');
+      return;
+    }
+    if (!icono) {
+      alert('Selecciona un icono.');
       return;
     }
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        "id": await obtenerNuevoIdCategoria(),
-        "nombre": nombre
+        id: await obtenerNuevoIdCategoria(),
+        nombre: nombre,
+        icono: icono,
       }),
     })
       .then((response) => response.json())
-      .then((response) => {
-        console.log("creado", response);
+      .then(() => {
         actualizarCategoria();
       })
       .catch((error) => {
@@ -69,51 +77,49 @@ const Categorias = () => {
     setVisible(false);
     setNombre('');
     setIdCategoria(0);
+    setSelectedIcon('');
   };
 
-
-  const editarCategoria = (idCategoria, nombre) => {
+  const editarCategoria = (idCategoria, nombre, icono) => {
     fetch(`${API_URL}/${idCategoria}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        "nombre": nombre,
-      })
-    }).then((response) => response.json())
-      .then((response) => {
-        console.log("editado",response);
+        nombre: nombre,
+        icono: icono,
+      }),
+    })
+      .then((response) => response.json())
+      .then(() => {
         actualizarCategoria();
-      }).catch(error => {
-        console.error(error)
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 
-  
-  const editar = (id, nombre) => {
+  const editar = (id, nombre, icono) => {
     setVisible(true);
     setIdCategoria(id);
     setNombre(nombre);
+    setSelectedIcon(icono);
   };
 
- 
   const eliminarCategoria = (idCategoria) => {
     fetch(`${API_URL}/${idCategoria}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log("eliminado",response);
+      .then(() => {
         getCategorias();
       })
-      .catch((error) =>{
-        console.error(error)
-      }
-    )
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const buscadorFiltrado = (text) => {
-    setSearchQuery(text); 
+    setSearchQuery(text);
     if (text) {
       const newData = data.filter((item) => {
         const itemData = item.nombre ? item.nombre.toUpperCase() : ''.toUpperCase();
@@ -125,10 +131,23 @@ const Categorias = () => {
       setFilteredData(data);
     }
   };
-  
+
   useEffect(() => {
     getCategorias();
   }, []);
+
+  const renderIconOption = ({ item }) => (
+    <TouchableOpacity
+      style={styles.iconOption}
+      onPress={() => {
+        setSelectedIcon(item);
+        setIconModalVisible(false);
+      }}
+    >
+      <Ionicons name={item} size={24} color="black" />
+      <Text style={styles.iconText}>{item}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView className="bg-white" style={styles.container}>
@@ -136,20 +155,22 @@ const Categorias = () => {
       <Surface className="bg-white mt-6" style={styles.header}>
         <Title className="font-fbold">Categorías</Title>
         <TouchableOpacity className="bg-pink-600" style={styles.button} onPress={() => setVisible(true)}>
-          <Text className="font-fsemibold text-white">Crear Categoria</Text>
+          <Text className="font-fsemibold text-white">Crear Categoría</Text>
         </TouchableOpacity>
       </Surface>
 
       <View style={styles.searchContainer}>
         <TextInput
-            style={[styles.input, { backgroundColor: '#fce7f3' }]}
-            placeholder="Buscar categoría por nombre"
-            value={searchQuery}
-            onChangeText={(text) => buscadorFiltrado(text)}
-          />
-      </View>      
+          style={[styles.input, { backgroundColor: '#fce7f3' }]}
+          placeholder="Buscar categoría por nombre"
+          value={searchQuery}
+          onChangeText={(text) => buscadorFiltrado(text)}
+        />
+      </View>
 
-      <Text className="font-fsemibold" style={styles.textFriends}>{filteredData.length} Categorías encontradas</Text>
+      <Text className="font-fsemibold" style={styles.textFriends}>
+        {filteredData.length} Categorías encontradas
+      </Text>
 
       <FlatList
         data={filteredData}
@@ -159,7 +180,8 @@ const Categorias = () => {
         renderItem={({ item }) => (
           <Items
             nombre={item.nombre}
-            onEdit={() => editar(item.id, item.nombre)}
+            icono={item.icono}
+            onEdit={() => editar(item.id, item.nombre, item.icono)}
             onDelete={() => eliminarCategoria(item.id)}
           />
         )}
@@ -167,13 +189,13 @@ const Categorias = () => {
 
       <ModalView
         visible={visible}
-        title="Crear Categoria"
+        title="Crear Categoría"
         onDismiss={() => setVisible(false)}
         onSubmit={() => {
           if (idCategoria && nombre) {
-            editarCategoria(idCategoria, nombre);
+            editarCategoria(idCategoria, nombre, selectedIcon);
           } else {
-            agregarCategoria(nombre);
+            agregarCategoria(nombre, selectedIcon);
           }
         }}
         cancelable
@@ -184,7 +206,31 @@ const Categorias = () => {
           onChangeText={(text) => setNombre(text)}
           mode="outlined"
         />
+
+        <TouchableOpacity
+          style={styles.selectIconButton}
+          onPress={() => setIconModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>
+            {selectedIcon ? `Icono Seleccionado: ${selectedIcon}` : 'Seleccionar Icono'}
+          </Text>
+        </TouchableOpacity>
       </ModalView>
+
+      <Modal
+        visible={iconModalVisible}
+        animationType="slide"
+        onRequestClose={() => setIconModalVisible(false)}
+      >
+        <View style={styles.modalContent}>
+          <FlatList
+            data={iconOptions}
+            keyExtractor={(item) => item}
+            renderItem={renderIconOption}
+            numColumns={4}
+          />
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -204,7 +250,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: 16,
     marginBottom: 10,
-    marginTop: 20
+    marginTop: 20,
   },
   button: {
     padding: 10,
@@ -226,6 +272,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#f9fafb',
     marginBottom: 8,
+  },
+  modalContent: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  iconOption: {
+    flex: 1,
+    alignItems: 'center',
+    margin: 10,
+  },
+  iconText: {
+    fontSize: 12,
+    textAlign: 'center',
   },
 });
 
