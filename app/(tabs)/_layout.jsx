@@ -39,12 +39,13 @@ const TabsLayout = () => {
           tabBarInactiveTintColor: "#CDCDE0",
           tabBarShowLabel: false,
           tabBarStyle: {
-            height: 76, // Height of the tab bar
+            height: 66, // Height of the tab bar
             backgroundColor: '#161622',
             borderTopWidth: 1,
             borderTopColor: '#232533',
             paddingVertical: 0, // Removes vertical padding
             paddingBottom: 0,
+            paddingTop: 12, // Add padding to move icons up
           },
           safeAreaInsets: { bottom: 0 }
         }}

@@ -201,7 +201,7 @@ const Productos = () => {
       <ModalView
         visible={visible}
         title="Crear Producto"
-        onDismiss={() => setVisible(false)}
+        onDismiss={() => { setVisible(false); getCategorias(); }}
         onSubmit={() => {
           if (idProducto !== 0) {
             editarProducto(idProducto, nombre, idCategoria, precioVenta, cantidadDisponible);

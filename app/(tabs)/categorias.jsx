@@ -73,11 +73,11 @@ const Categorias = () => {
   };
 
   const actualizarCategoria = () => {
-    getCategorias();
     setVisible(false);
     setNombre('');
     setIdCategoria(0);
     setSelectedIcon('');
+    getCategorias();
   };
 
   const editarCategoria = (idCategoria, nombre, icono) => {
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   buttonText: {
-    color: 'white',
+    color: '#d6336c',
   },
   textFriends: {
     fontSize: 15,
@@ -286,6 +286,13 @@ const styles = StyleSheet.create({
   iconText: {
     fontSize: 12,
     textAlign: 'center',
+  },
+  selectIconButton: {
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: '#f9fafb',
+    alignItems: 'center',
+    marginTop: 10,
   },
 });
 

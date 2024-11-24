@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Modal, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Modal, SafeAreaView, Image } from 'react-native';
 import { getVentasFiltrado, getClientesFiltrado, getProductos, getClientes } from '../../components/api';
 import ModalView from '../../components/ModalView';
 import { Surface, Title, TextInput } from 'react-native-paper';
@@ -313,12 +313,18 @@ const Ventas = () => {
               keyExtractor={(item) => item.idProducto.toString()}
               renderItem={({ item }) => (
                 <View style={styles.productoItem}>
-                  <Text className="font-fregular" >Producto: {productos.find(producto => producto.id === item.idProducto)?.nombre}</Text>
-                  <View className="flex-col">
-                    <Text className="font-fregular" >Cantidad: {item.cantidad}</Text>
-                    <Text className="font-fregular" >Precio: Gs {item.precio}</Text>
+                  <View style={styles.row}>
+                    <Image
+                      source={{ uri: productos.find(producto => producto.id === item.idProducto)?.imagen }}
+                      style={{ width: 50, height: 50, marginRight: 10 }}
+                    />
+                    <View>
+                      <Text className="font-fregular" >Producto: {productos.find(producto => producto.id === item.idProducto)?.nombre}</Text>
+                      <Text className="font-fregular" >Cantidad: {item.cantidad}</Text>
+                      <Text className="font-fregular" >Precio: Gs {item.precio}</Text>
+                      <Text className="font-fregular" >Sup Total: Gs {item.cantidad * item.precio}</Text>
+                    </View>
                   </View>
-                  <Text className="font-fregular" >Sup Total: Gs {item.cantidad * item.precio}</Text>
                 </View>
               )}
             />
