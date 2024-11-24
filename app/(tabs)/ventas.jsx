@@ -165,11 +165,16 @@ const Ventas = () => {
           <Picker
             selectedValue={filtroTipoVenta}
             style={{ height: 50, width: 150 }}
-            onValueChange={(itemValue) => {
-              setFiltroTipoVenta(itemValue);
+            onValueChange={async (itemValue) => {
+              if (itemValue === "todos") {
+                const data = await getVentasFiltrado(filtroFechaDesde, filtroFechaHasta, filtroCliente, null);
+                setVentas(data);
+              } else {
+                setFiltroTipoVenta(itemValue);
+              }
             }}
           >
-            <Picker.Item label="Todos" value={null} />
+            <Picker.Item label="Todos" value="todos" />
             <Picker.Item label="Pickup" value="pickup" />
             <Picker.Item label="Delivery" value="delivery" />
           </Picker>
@@ -239,9 +244,9 @@ const Ventas = () => {
             setFiltroFechaHasta(null);
             setFiltroCliente(null);
             setNombre(null);
-            const data = await getVentasFiltrado(null, null, null, null);
             setCedula(null);
             setFiltroTipoVenta(null);
+            const data = await getVentasFiltrado(null, null, null, null);
             setVentas(data);
           }}
         />
