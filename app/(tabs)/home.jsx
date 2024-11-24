@@ -21,10 +21,11 @@ const Home = () => {
   const [isCarritoVisible, setIsCarritoVisible] = useState(false);
   const [isClienteModalVisible, setIsClienteModalVisible] = useState(false);
   const [isCategoriaModalVisible, setIsCategoriaModalVisible] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [tipoOperacion, setTipoOperacion] = useState(null);
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [direccionEntrega, setDireccionEntrega] = useState('');
   const [initialRegion, setInitialRegion] = useState({
     latitude: -25.3,
     longitude: -57.633333,
@@ -39,7 +40,7 @@ const Home = () => {
         alert('Se rechazó el acceso a la ubicación.');
         return;
       }
-    
+
       const location = await Location.getCurrentPositionAsync({});
       setInitialRegion({
         latitude: location.coords.latitude,
@@ -63,6 +64,7 @@ const Home = () => {
   }, []);
 
   const getProductos = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/productos`);
       const data = await response.json();
@@ -71,6 +73,7 @@ const Home = () => {
     } catch (error) {
       console.error("Error al cargar productos:", error);
     }
+    setLoading(false);
   };
 
   const actualizarInventario = async (idProducto, nuevaCantidad) => {
@@ -87,7 +90,7 @@ const Home = () => {
       console.error('Error actualizando inventario:', error);
     }
   };
-  
+
   const getCategorias = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/categorias`);
@@ -230,10 +233,38 @@ const Home = () => {
     console.log("Location selected:", location);
   };
 
+  const limpiarCarrito = () => {
+    setCarrito([]);
+    setCliente({ cedula: '', nombre: '', apellido: '' });
+    setDireccionEntrega('');
+    setSelectedLocation(null);
+    setTipoOperacion(null);
+  };
+
+  const verificarTipoOperacion = async () => {
+    if (tipoOperacion === 'delivery' && (!direccionEntrega || !selectedLocation)) {
+      return false;
+    }
+    if (tipoOperacion != 'pickup' && tipoOperacion != 'delivery') {
+      return false;
+    }
+    return true;
+  };
+
   const finalizarOrden = async () => {
     const idCliente = await verificarYRegistrarCliente();
     if (!idCliente) {
       alert("Error al procesar la información del cliente.");
+      return;
+    }
+
+    const ubicacionValida = await verificarTipoOperacion();
+    if (!ubicacionValida) {
+      if (tipoOperacion) {
+        alert("Error al procesar la direccion del cliente. \nComplete la direccion y ubicacion");
+      } else {
+        alert("Debe seleccionar el tipo pickup o delivery para completar la compra.");
+      }
       return;
     }
 
@@ -256,8 +287,8 @@ const Home = () => {
           precio: item.precioVenta,
         })),
         // aqui se cargaran los datos del tipo de pedido
-        tipoOperacion: tipoOperacion, 
-        direccionEntrega: "direccionEntrega",
+        tipoOperacion: tipoOperacion,
+        direccionEntrega: direccionEntrega,
         ubicacionMapa: selectedLocation,
         total: carrito.reduce((total, item) => total + item.cantidad * item.precioVenta, 0),
       };
@@ -281,8 +312,7 @@ const Home = () => {
         getProductos();
 
         // Vaciar el carrito y limpiar los datos del cliente
-        setCarrito([]);
-        setCliente({ cedula: '', nombre: '', apellido: '' });
+        limpiarCarrito();
       } else {
         const errorData = await response.json();
         console.error("Error al registrar la orden:", errorData);
@@ -334,6 +364,8 @@ const Home = () => {
           />
         )}
         ListEmptyComponent={<Text className="font-fsemibold" style={styles.emptyText}>No hay productos disponibles</Text>}
+        refreshing={loading}
+        onRefresh={getProductos}
       />
 
 
@@ -423,8 +455,8 @@ const Home = () => {
               onChangeText={(text) => setCliente({ ...cliente, apellido: text })}
             />
             {/* seleccionar orden */}
-             <Text className="font-fsemibold text-gray-900 text-lg mb-1">Selecciona el tipo de orden</Text>
-            
+            <Text className="font-fsemibold text-gray-900 text-lg mb-1">Selecciona el tipo de orden</Text>
+
             <View className="flex flex-row gap-4 items-start justify-start mb-2">
 
               <TouchableOpacity
@@ -435,16 +467,39 @@ const Home = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 className="rounded-lg bg-pink-500 p-2"
-                onPress={() => {handleOptionSelect('delivery'); handleOpenMap(); }}
+                onPress={() => { handleOptionSelect('delivery'); }}
               >
                 <Text className="text-fsemibold text-white">Delivery</Text>
               </TouchableOpacity>
             </View>
 
             {tipoOperacion && (
-              <Text className="text-fsemibold text-black text-sm">
-                {tipoOperacion} seleccionada.
-              </Text>
+              <View>
+                {tipoOperacion === 'delivery' && (
+                  <View>
+                    <Text className="font-fsemibold text-gray-900 text-md mb-1">Especifique la Direccion del delivery:</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Direccion"
+                      value={direccionEntrega}
+                      onChangeText={(text) => setDireccionEntrega(text)}
+                    />
+                    <TouchableOpacity
+                      className="rounded-lg bg-pink-500 p-2"
+                      onPress={() => { handleOpenMap(); }}
+                    >
+                      <Text className="text-fsemibold text-white" style={{ textAlign: 'center' }}>
+                        {selectedLocation ? "Ubicación seleccionada" : "Seleccionar en el Mapa"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {tipoOperacion === 'pickup' && (
+                  <View>
+                    <Text className="font-fsemibold text-gray-900 mb-1">Pickup: Puede pasar por nuestra sucursal a retirar su pedido</Text>
+                  </View>
+                )}
+              </View>
             )}
 
             <View style={styles.buttonContainer}>
@@ -574,7 +629,7 @@ const styles = StyleSheet.create({
   icon: { marginRight: 10 },
   categoriaButton: { backgroundColor: '#f3f4f6', padding: 10, borderRadius: 8 },
   categoriaButtonText: { color: '#374151', fontWeight: 'bold' },
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 0 },
   optionButton: {
     backgroundColor: '#007BFF',
     paddingVertical: 10,

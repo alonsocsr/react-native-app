@@ -21,7 +21,6 @@ const Productos = () => {
   const [imagen, setImagen] = useState('');
   const [cantidadDisponible, setCantidadDisponible] = useState(0);
   const [isCategoriaModalVisible, setIsCategoriaModalVisible] = useState(false);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
 
   const API_URL = `http://${db_ip}:3000/productos`;
   const CATEGORIAS_URL = `http://${db_ip}:3000/categorias`;
@@ -32,7 +31,7 @@ const Productos = () => {
       .then((response) => response.json())
       .then((response) => {
         setData(response);
-        setFilteredData(response);
+        getCategorias();
       })
       .catch((e) => console.log(e));
     setLoading(false);

@@ -24,6 +24,7 @@ const Ventas = () => {
   const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
   const [productos, setProductos] = useState([]);
   const [filtroTipoVenta, setFiltroTipoVenta] = useState(null);
+  const [loading, setLoading] = useState(false);
 
 
   /* 
@@ -52,6 +53,16 @@ const Ventas = () => {
     fetchClientes();
   }, []);
 
+  const getVentas = async () => {
+    setLoading(true);
+    try {
+      const data = await getVentasFiltrado(filtroFechaDesde, filtroFechaHasta, filtroCliente, filtroTipoVenta);
+      setVentas(data);
+    } catch (error) {
+      console.error("Error al obtener ventas:", error);
+    }
+    setLoading(false);
+  };
 
   // filtros para las fechas de inicio
   const seleccionarFechaDesde = (event, selectedDate) => {
@@ -260,6 +271,8 @@ const Ventas = () => {
         <FlatList
           data={ventas}
           keyExtractor={(item) => item.id.toString()}
+          refreshing={loading}
+          onRefresh={getVentas}
           renderItem={({ item }) => {
             const cliente = clientes.find(cliente => cliente.id === item.idCliente.toString());
             return (
@@ -316,22 +329,25 @@ const Ventas = () => {
             <FlatList
               data={ventaSeleccionada.detalle}
               keyExtractor={(item) => item.idProducto.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.productoItem}>
-                  <View style={styles.row}>
-                    <Image
-                      source={{ uri: productos.find(producto => producto.id === item.idProducto)?.imagen }}
-                      style={{ width: 50, height: 50, marginRight: 10 }}
-                    />
-                    <View>
-                      <Text className="font-fregular" >Producto: {productos.find(producto => producto.id === item.idProducto)?.nombre}</Text>
-                      <Text className="font-fregular" >Cantidad: {item.cantidad}</Text>
-                      <Text className="font-fregular" >Precio: Gs {item.precio}</Text>
-                      <Text className="font-fregular" >Sup Total: Gs {item.cantidad * item.precio}</Text>
+              renderItem={({ item }) => {
+                const producto = productos.find(producto => producto.id === item.idProducto);
+                return (
+                  <View style={styles.productoItem}>
+                    <View style={styles.row}>
+                      <Image
+                        source={{ uri: producto ? producto.imagen : null }}
+                        style={{ width: 50, height: 50, marginRight: 10 }}
+                      />
+                      <View>
+                        <Text className="font-fregular" >Producto: {producto ? producto.nombre : "Producto no encontrado"}</Text>
+                        <Text className="font-fregular" >Cantidad: {item.cantidad}</Text>
+                        <Text className="font-fregular" >Precio: Gs {item.precio}</Text>
+                        <Text className="font-fregular" >Sup Total: Gs {item.cantidad * item.precio}</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              )}
+                );
+              }}
             />
             <Button color={'#ec4899'} title="Cerrar" onPress={() => setDetalleVentaVisible(false)} />
           </View>
