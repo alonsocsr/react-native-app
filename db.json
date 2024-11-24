@@ -21,101 +21,75 @@
       "icono": "beaker"
     },
     {
-      "nombre": "Tecnologias",
       "id": "6",
+      "nombre": "Tecnologias",
       "icono": "cellular"
-    },
-    {
-      "nombre": "Herramientas",
-      "icono": "albums-sharp",
-      "id": "7"
-    },
-    {
-      "nombre": "Albumes",
-      "icono": "albums-outline",
-      "id": "8"
     }
   ],
   "productos": [
     {
-      "id": "1",
-      "nombre": "Remera",
+      "nombre": "Remera Básica",
       "idCategoria": "1",
-      "precioVenta": 300,
-      "imagen": "http://localhost:3000/images/template-2710535_1280.jpg",
-      "cantidad": 7
+      "precioVenta": 100000,
+      "imagen": "https://acdn.mitiendanube.com/stores/002/535/145/products/tecla_productpage_classicnegra_01_hero_desktop-ee80d79518f953bd5a17161744404898-640-0.png",
+      "cantidadDisponible": 3,
+      "id": "1"
     },
     {
       "id": "2",
-      "nombre": "Camisilla",
-      "idCategoria": "1",
-      "precioVenta": 500,
-      "imagen": "http://localhost:3000/images/template-2710535_1280.jpg",
-      "cantidad": 5
-    },
-    {
-      "id": "3",
       "nombre": "Atun",
       "idCategoria": "3",
-      "precioVenta": 5000,
-      "imagen": "http://localhost:3000/images/pexels-towfiqu-barbhuiya-3440682-12001951.jpg",
-      "cantidad": 8
+      "precioVenta": 15000,
+      "imagen": "https://www.superseis.com.py/images/thumbs/0208185.jpeg",
+      "cantidadDisponible": 0
     },
     {
       "id": "4",
-      "nombre": "Pantalón",
+      "nombre": "Pantalón Dama",
       "idCategoria": "1",
-      "precioVenta": 700,
-      "imagen": "http://localhost:3000/images/pexels-pixabay-65676.jpg",
-      "cantidad": 8
+      "precioVenta": 250000,
+      "imagen": "https://candelascloset.es/9652-large_default/pantalon-largo-pons-pan-producto-basico.jpg",
+      "cantidadDisponible": 8
     },
     {
       "id": "5",
       "nombre": "Cerveza",
       "idCategoria": "2",
-      "precioVenta": 200,
-      "imagen": "http://localhost:3000/images/pexels-enginakyurt-1672304.jpg",
-      "cantidad": 5
+      "precioVenta": 24354,
+      "imagen": "https://nissei.com/media/catalog/product/cache/24e3af3791642c18c52611620aeb2e21/7/0/70793.jpg",
+      "cantidadDisponible": 0
     },
     {
       "id": "6",
       "nombre": "Vino",
       "idCategoria": "2",
-      "precioVenta": 1500,
-      "imagen": "http://localhost:3000/images/pexels-bernyce-hollingworth-916019-2702805.jpg",
-      "cantidad": 5
+      "precioVenta": 60000,
+      "imagen": "https://grutteronline.casagrutter.com.py/wp-content/uploads/imagenes/7896072902921.jpg",
+      "cantidadDisponible": 0
     },
     {
       "id": "7",
-      "nombre": "gaseosa",
+      "nombre": "Gaseosa",
       "idCategoria": "2",
-      "precioVenta": 10000,
-      "imagen": "http://localhost:3000/images/pexels-donaldtong94-39720.jpg",
-      "cantidad": 5
+      "precioVenta": 15000,
+      "imagen": "https://www.superseis.com.py/images/thumbs/0244073_500.png",
+      "cantidadDisponible": 3
     },
     {
-      "nombre": "caramelos",
-      "idCategoria": "4",
-      "precioVenta": 10005,
       "id": "8",
-      "imagen": "http://localhost:3000/images/pexels-nietjuh-1906435.jpg",
-      "cantidad": 5
+      "nombre": "Caramelos",
+      "idCategoria": "4",
+      "precioVenta": 25000,
+      "imagen": "https://casarica.cdn1.dattamax.com/userfiles/images/productos/600/7790580178208.jpg",
+      "cantidadDisponible": 4
     },
     {
       "id": "9",
-      "nombre": "Parlantes",
+      "nombre": "Parlate jbl",
       "idCategoria": "6",
-      "precioVenta": 140000,
-      "imagen": "http://localhost:3000/images/pexels-pixabay-373638.jpg",
-      "cantidad": 5
-    },
-    {
-      "id": "10",
-      "nombre": "Choclo",
-      "idCategoria": "3",
-      "precioVenta": 400,
-      "imagen": "http://localhost:3000/images/pexels-pixabay-373638.jpg",
-      "cantidad": 5
+      "precioVenta": 334000,
+      "imagen": "https://www.gonzalezgimenez.com.py/storage/sku/jbl-parlantes-y-minicomponentes-jbl-go-4-rojo-1-1-1721663634.jpg",
+      "cantidadDisponible": 5
     }
   ],
   "clientes": [
@@ -148,175 +122,93 @@
       "cedula": "1234567",
       "nombre": "Majito",
       "apellido": "Mendoza"
+    },
+    {
+      "id": "6",
+      "cedula": "19940201",
+      "nombre": "Harry",
+      "apellido": "Syles"
+    },
+    {
+      "id": "7",
+      "cedula": "123466",
+      "nombre": "Marcelo",
+      "apellido": "Tinelli"
+    },
+    {
+      "id": "8",
+      "cedula": "333444",
+      "nombre": "Norma",
+      "apellido": "Martinez"
+    },
+    {
+      "id": "9",
+      "cedula": "112233",
+      "nombre": "Florencia",
+      "apellido": "Florida"
+    },
+    {
+      "id": "10",
+      "cedula": "1011002",
+      "nombre": "Fabrisio",
+      "apellido": "Cano"
+    },
+    {
+      "id": "11",
+      "cedula": "090911",
+      "nombre": "Cesar",
+      "apellido": "Alonso"
+    },
+    {
+      "id": "12",
+      "cedula": "4444444",
+      "nombre": "gus",
+      "apellido": "sosa"
     }
   ],
   "ventas": [
     {
-      "id": "1",
-      "fecha": "2023-11-01",
-      "idCliente": "1",
-      "total": 5600,
+      "id": "21",
+      "idCliente": "12",
+      "fecha": "2024-11-24",
       "detalle": [
         {
-          "idProducto": "1",
-          "cantidad": 2,
-          "precio": 300
+          "idProducto": "7",
+          "cantidad": 1,
+          "precio": 15000
         },
         {
-          "idProducto": "3",
+          "idProducto": "8",
           "cantidad": 1,
-          "precio": 5000
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "fecha": "2024-12-02",
-      "idCliente": "1",
-      "total": 5800,
-      "detalle": [
-        {
-          "idProducto": "2",
-          "cantidad": 1,
-          "precio": 500
-        },
-        {
-          "idProducto": "3",
-          "cantidad": 1,
-          "precio": 5000
-        },
-        {
-          "idProducto": "1",
-          "cantidad": 1,
-          "precio": 300
-        }
-      ]
-    },
-    {
-      "id": "3",
-      "fecha": "2024-11-03",
-      "idCliente": "2",
-      "total": 2700,
-      "detalle": [
-        {
-          "idVenta": "3",
-          "idDetalleVenta": "6",
-          "idProducto": "4",
-          "cantidad": 3,
-          "precio": 700
-        },
-        {
-          "idProducto": "5",
-          "cantidad": 1,
-          "precio": 200
-        }
-      ]
-    },
-    {
-      "id": "4",
-      "fecha": "2023-10-04",
-      "idCliente": "3",
-      "total": 3000,
-      "detalle": [
-        {
-          "idProducto": "6",
-          "cantidad": 2,
-          "precio": 1500
-        }
-      ]
-    },
-    {
-      "id": "5",
-      "idCliente": "4",
-      "fecha": "2024-11-03",
-      "detalle": [
-        {
-          "idProducto": "1",
-          "cantidad": 1,
-          "precio": 300
-        },
-        {
-          "idProducto": "2",
-          "cantidad": 1,
-          "precio": 500
+          "precio": 25000
         }
       ],
-      "total": 800
+      "tipoOperacion": "delivery",
+      "direccionEntrega": "direccionEntrega",
+      "ubicacionMapa": {
+        "latitude": -25.3733468,
+        "longitude": -57.3930362
+      },
+      "total": 40000
     },
     {
-      "id": "7",
-      "idCliente": "4",
-      "fecha": "2024-11-03",
+      "id": "22",
+      "idCliente": "11",
+      "fecha": "2024-11-24",
       "detalle": [
         {
-          "idProducto": "4",
-          "cantidad": 2,
-          "precio": 700
-        }
-      ],
-      "total": 1400
-    },
-    {
-      "id": "8",
-      "idCliente": "4",
-      "fecha": "2024-11-03",
-      "detalle": [
-        {
-          "idProducto": "10",
-          "cantidad": 6,
-          "precio": 10000
-        }
-      ],
-      "total": 60000
-    },
-    {
-      "id": "9",
-      "idCliente": "4",
-      "fecha": "2024-11-03",
-      "detalle": [
-        {
-          "idProducto": "10",
-          "cantidad": 6,
-          "precio": 10000
-        }
-      ],
-      "total": 60000
-    },
-    {
-      "id": "10",
-      "idCliente": "4",
-      "fecha": "2024-11-03",
-      "detalle": [
-        {
-          "idProducto": "1",
+          "idProducto": "7",
           "cantidad": 1,
-          "precio": 300
-        },
-        {
-          "idProducto": "2",
-          "cantidad": 1,
-          "precio": 500
-        },
-        {
-          "idProducto": "4",
-          "cantidad": 1,
-          "precio": 700
+          "precio": 15000
         }
       ],
-      "total": 1500
-    },
-    {
-      "id": "11",
-      "idCliente": "5",
-      "fecha": "2024-11-03",
-      "detalle": [
-        {
-          "idProducto": "9",
-          "cantidad": 1,
-          "precio": 140000
-        }
-      ],
-      "total": 140000
+      "tipoOperacion": "delivery",
+      "direccionEntrega": "direccionEntrega",
+      "ubicacionMapa": {
+        "latitude": -25.3733468,
+        "longitude": -57.3930362
+      },
+      "total": 15000
     }
   ]
 }

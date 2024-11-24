@@ -1,56 +1,79 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
-const ItemVentas = ({ nombre, categoria, precioVenta, onAgregarAlCarrito }) => {
+export default function ItemVentas({ nombre, categoria, precioVenta, imagen, onAgregarAlCarrito, deshabilitado }) {
   return (
     <Card style={styles.item}>
       <View style={styles.rowView}>
-        <View>
-          <Text className="font-fregular" style={styles.nombre}>{nombre}</Text>
+        <Image
+        source={{ uri: imagen}} 
+        style={styles.productImage}
+/>
+        <View style={styles.details}>
+          <Text className="font-fregular"  style={styles.nombre}>{nombre}</Text>
           <Text className="font-fregular" style={styles.categoria}>Categoría: {categoria}</Text>
-          <Text className="font-fregular" style={styles.precio}>Precio de venta: {precioVenta} GS</Text>
+          <Text className="font-fregular" style={styles.precio}>Precio: {precioVenta} GS</Text>
+          <TouchableOpacity onPress={onAgregarAlCarrito} 
+          style={deshabilitado ? styles.disabledButton : styles.activeButton} >
+            <Text className="font-fregular" style={styles.buttonText}>Agregar al Carrito</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.addButton} onPress={onAgregarAlCarrito}>
-          <Text className="font-fregular" style={styles.addButtonText}>Agregar al carrito</Text>
-        </TouchableOpacity>
       </View>
     </Card>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  
   rowView: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
+    flexDirection: 'row',
     alignItems: 'center',
   },
   item: {
     padding: 16,
-    margin: 16,
+    marginVertical: 8,
     elevation: 4,
     borderRadius: 8,
   },
+  productImage: {
+    width: 100,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 16,
+  },
+  details: {
+    flex: 1,
+  },
   nombre: {
     fontSize: 18,
-  },
-  categoria: {
-    fontSize: 10,
-  },
-  precio: {
-    fontSize: 12,
     fontWeight: 'bold',
   },
-  addButton: {
-    backgroundColor: '#ec4899',
-    padding: 8,
-    borderRadius: 5,
+  categoria: {
+    fontSize: 14,
+    color: '#6b7280',
   },
-  addButtonText: {
+  precio: {
+    fontSize: 16,
+    color: '#ec4899',
+  },
+  activeButton: {
+    marginTop: 10,
+    backgroundColor: '#ec4899',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
     color: '#ffffff',
     fontWeight: 'bold',
   },
+  disabledButton: {
+    marginTop: 10,
+    backgroundColor: '#d1d5db',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
 });
-
-
-export default ItemVentas;

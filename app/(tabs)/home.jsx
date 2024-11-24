@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, SafeAreaView, Modal, StyleSheet, Button } from 'react-native';
 import { Surface, Title } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
 import Carrito from '../../components/Carrito';
 import ItemVentas from '../../components/ItemVentas';
 import { db_ip } from '@env';
-
+import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 const API_BASE_URL = `http://${db_ip}:3000`;
 
@@ -18,7 +19,43 @@ const Home = () => {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   const [cliente, setCliente] = useState({ cedula: '', nombre: '', apellido: '' });
   const [isCarritoVisible, setIsCarritoVisible] = useState(false);
-  const [isClienteModalVisible, setIsClienteModalVisible] = useState(false); // Nuevo estado para el modal de cliente
+  const [isClienteModalVisible, setIsClienteModalVisible] = useState(false);
+  const [isCategoriaModalVisible, setIsCategoriaModalVisible] = useState(false);
+
+  const [tipoOperacion, setTipoOperacion] = useState(null);
+  const [isMapVisible, setIsMapVisible] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [initialRegion, setInitialRegion] = useState({
+    latitude: -25.3,
+    longitude: -57.633333,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  const getCurrentLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Se rechazó el acceso a la ubicación.');
+        return;
+      }
+    
+      const location = await Location.getCurrentPositionAsync({});
+      setInitialRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+      setSelectedLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    } catch (error) {
+      console.error("Error obteniendo ubicación actual:", error);
+      alert("No se pudo obtener la ubicación actual. Intenta nuevamente.");
+    }
+  };
 
   useEffect(() => {
     getProductos();
@@ -36,6 +73,21 @@ const Home = () => {
     }
   };
 
+  const actualizarInventario = async (idProducto, nuevaCantidad) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/productos/${idProducto}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cantidadDisponible: nuevaCantidad }),
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar el inventario');
+      }
+    } catch (error) {
+      console.error('Error actualizando inventario:', error);
+    }
+  };
+  
   const getCategorias = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/categorias`);
@@ -52,24 +104,39 @@ const Home = () => {
       const matchesCategory = !categoriaSeleccionada || item.idCategoria.toString() === categoriaSeleccionada.toString();
       return matchesSearchQuery && matchesCategory;
     });
-    getProductos();
     setFilteredProductos(filteredData);
   }, [searchQuery, categoriaSeleccionada, productos]);
 
   const agregarAlCarrito = (producto) => {
     const productoEnCarrito = carrito.find((item) => item.id === producto.id);
-    if (productoEnCarrito) {
-      setCarrito(carrito.map((item) =>
-        item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
-      ));
+    const cantidadEnCarrito = productoEnCarrito ? productoEnCarrito.cantidad : 0;
+
+    if (producto.cantidadDisponible > cantidadEnCarrito) {
+      // Si hay suficiente inventario, agregar al carrito
+      if (productoEnCarrito) {
+        setCarrito(
+          carrito.map((item) =>
+            item.id === producto.id
+              ? { ...item, cantidad: item.cantidad + 1 }
+              : item
+          )
+        );
+      } else {
+        setCarrito([
+          ...carrito,
+          { ...producto, cantidad: 1, precioVenta: producto.precioVenta },
+        ]);
+      }
     } else {
-      setCarrito([...carrito, { ...producto, cantidad: 1, precioVenta: producto.precioVenta }]);
+      // Si no hay suficiente inventario, mostrar un mensaje de alerta
+      alert(
+        `No hay suficiente inventario para agregar más unidades del producto: ${producto.nombre}`
+      );
     }
   };
-
   const eliminarDelCarrito = (producto) => {
     const productoEnCarrito = carrito.find((item) => item.id === producto.id);
-    
+
     if (productoEnCarrito) {
       if (productoEnCarrito.cantidad > 1) {
         setCarrito(
@@ -91,14 +158,32 @@ const Home = () => {
     const ultimoId = clientes.length > 0 ? Math.max(...clientes.map(cliente => parseInt(cliente.id))) : 0;
     return (ultimoId + 1).toString();
   };
-  
+
+  const getClienteBuscado = async () => {
+    if (cliente.cedula.trim() === '') {
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/clientes?cedula=${cliente.cedula}`);
+      const data = await response.json();
+      if (data.length > 0) {
+        setCliente(data[0]);
+      } else {
+        setCliente({ ...cliente, nombre: 'No encontrado', apellido: '' });
+      }
+    } catch (error) {
+      console.error("Error al buscar cliente:", error);
+      alert("Error al buscar cliente");
+    }
+  };
+
   const verificarYRegistrarCliente = async () => {
     try {
       const isCedulaEmpty = cliente.cedula.trim() === '';
       const isNombreEmpty = cliente.nombre.trim() === '';
       const isApellidoEmpty = cliente.apellido.trim() === '';
       const isClienteDataValid = !isCedulaEmpty && !isNombreEmpty && !isApellidoEmpty;
-      if (!isClienteDataValid){
+      if (!isClienteDataValid) {
         // Los datos no son validos si no se completo algun campo, se retorna null
         return null;
       }
@@ -111,7 +196,7 @@ const Home = () => {
       } else {
         // Cliente no existe, créalo
         const nuevoId = await obtenerNuevoIdCliente();
-        body = JSON.stringify({ ...cliente, id: nuevoId });
+        let body = JSON.stringify({ ...cliente, id: nuevoId });
         const nuevoClienteResponse = await fetch(`${API_BASE_URL}/clientes`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -127,6 +212,24 @@ const Home = () => {
   };
 
 
+  const handleOptionSelect = (tipo) => {
+    setTipoOperacion(tipo);
+  };
+
+  const handleOpenMap = () => {
+    setIsMapVisible(true);
+  };
+
+  const handleCloseMap = () => {
+    setIsMapVisible(false);
+  };
+
+  const handleConfirmLocation = (location) => {
+    setSelectedLocation(location);
+    setIsMapVisible(false);
+    console.log("Location selected:", location); // Process the location as needed
+  };
+
   const finalizarOrden = async () => {
     const idCliente = await verificarYRegistrarCliente();
     if (!idCliente) {
@@ -134,12 +237,12 @@ const Home = () => {
       return;
     }
 
-  const obtenerNuevoId = async () => {
-    const response = await fetch(`${API_BASE_URL}/ventas`);
-    const ventas = await response.json();
-    const ultimoId = ventas.length > 0 ? Math.max(...ventas.map(venta => parseInt(venta.id))) : 0;
-    return (ultimoId + 1).toString();
-  };
+    const obtenerNuevoId = async () => {
+      const response = await fetch(`${API_BASE_URL}/ventas`);
+      const ventas = await response.json();
+      const ultimoId = ventas.length > 0 ? Math.max(...ventas.map(venta => parseInt(venta.id))) : 0;
+      return (ultimoId + 1).toString();
+    };
 
     try {
       const nuevoId = await obtenerNuevoId();
@@ -152,6 +255,10 @@ const Home = () => {
           cantidad: item.cantidad,
           precio: item.precioVenta,
         })),
+        // aqui se cargaran los datos del tipo de pedido
+        tipoOperacion: tipoOperacion, 
+        direccionEntrega: "direccionEntrega",
+        ubicacionMapa: selectedLocation,
         total: carrito.reduce((total, item) => total + item.cantidad * item.precioVenta, 0),
       };
 
@@ -162,8 +269,16 @@ const Home = () => {
       });
 
       if (response.ok) {
+        // para la cantidad
+        for (const item of carrito) {
+          const nuevoInventario = item.cantidadDisponible - item.cantidad;
+          await actualizarInventario(item.id, nuevoInventario);
+        }
         console.log("Orden registrada exitosamente");
         alert("¡Compra realizada exitosamente!");
+
+        // actualizar el home de articulos
+        getProductos();
 
         // Vaciar el carrito y limpiar los datos del cliente
         setCarrito([]);
@@ -192,16 +307,16 @@ const Home = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <Picker
-          selectedValue={categoriaSeleccionada}
-          onValueChange={(value) => setCategoriaSeleccionada(value)}
-          style={styles.picker}
+        <TouchableOpacity
+          style={styles.categoriaButton}
+          onPress={() => setIsCategoriaModalVisible(true)}
         >
-          <Picker.Item label="Todas las categorías" value="" />
-          {categorias.map((cat) => (
-            <Picker.Item key={cat.id} label={cat.nombre} value={cat.id} />
-          ))}
-        </Picker>
+          <Text style={styles.categoriaButtonText}>
+            {categoriaSeleccionada
+              ? `Filtrar: ${categorias.find((cat) => cat.id === categoriaSeleccionada)?.nombre || "Todas las categorías"}`
+              : "Filtrar por categoría"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -210,15 +325,17 @@ const Home = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <ItemVentas
-            className="font-fsemibold text-pink-500"
             nombre={item.nombre}
             categoria={categorias.find((cat) => cat.id === item.idCategoria)?.nombre || "Sin categoría"}
             precioVenta={item.precioVenta}
+            imagen={item.imagen} // Nuevo campo para la imagen
             onAgregarAlCarrito={() => agregarAlCarrito(item)}
+            deshabilitado={item.cantidadDisponible <= 0}
           />
         )}
         ListEmptyComponent={<Text className="font-fsemibold" style={styles.emptyText}>No hay productos disponibles</Text>}
       />
+
 
       <TouchableOpacity style={styles.carritoButton} onPress={() => setIsCarritoVisible(true)}>
         <Text className="font-fsemibold" style={styles.carritoButtonText}>Ver Carrito ({carrito.length})</Text>
@@ -235,6 +352,37 @@ const Home = () => {
         onEliminarDelCarrito={eliminarDelCarrito}
       />
 
+      {/* Modal para seleccionar categorías */}
+      <Modal
+        visible={isCategoriaModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsCategoriaModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Categoría</Text>
+            <FlatList
+              data={[{ id: '', nombre: 'Todas las categorías', icono: 'apps' }, ...categorias]}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.categoriaOption}
+                  onPress={() => {
+                    setCategoriaSeleccionada(item.id);
+                    setIsCategoriaModalVisible(false);
+                  }}
+                >
+                  <Ionicons name={item.icono} size={20} color="#000" style={styles.icon} />
+                  <Text style={styles.categoriaOptionText}>{item.nombre}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <Button title="Cerrar" onPress={() => setIsCategoriaModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+
       {/* Modal para capturar datos del cliente */}
       <Modal
         visible={isClienteModalVisible}
@@ -244,16 +392,24 @@ const Home = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text  style={styles.modalTitle}>Información del Cliente</Text>
+            <Text className="font-fsemibold text-xl text-gray-900 mb-2">Información del Cliente</Text>
+            <View style={styles.row}>
+              <TextInput
+                className="font-fregular w-[80%]"
+                style={styles.input}
+                placeholder="Cédula"
+                value={cliente.cedula}
+                onChangeText={(text) => setCliente({ ...cliente, cedula: text })}
+              />
+              <TouchableOpacity
+                onPress={async () => getClienteBuscado()}
+                style={{ marginLeft: 10 }}
+              >
+                <Ionicons name="search" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
             <TextInput
-              className="font-fregular"
-              style={styles.input}
-              placeholder="Cédula"
-              value={cliente.cedula}
-              onChangeText={(text) => setCliente({ ...cliente, cedula: text })}
-            />
-            <TextInput
-              className="font-fregular"
+              className="font-fregular w-[80%]"
               style={styles.input}
               placeholder="Nombre"
               value={cliente.nombre}
@@ -261,11 +417,36 @@ const Home = () => {
             />
             <TextInput
               style={styles.input}
-              className="font-fregular"
+              className="font-fregular w-[80%]"
               placeholder="Apellido"
               value={cliente.apellido}
               onChangeText={(text) => setCliente({ ...cliente, apellido: text })}
             />
+            {/* seleccionar orden */}
+             <Text className="font-fsemibold text-gray-900 text-lg mb-1">Selecciona el tipo de orden</Text>
+            
+            <View className="flex flex-row gap-4 items-start justify-start mb-2">
+
+              <TouchableOpacity
+                className="rounded-lg bg-pink-500 p-2"
+                onPress={() => handleOptionSelect('pickup')}
+              >
+                <Text className="text-psemibold text-white">Pickup</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="rounded-lg bg-pink-500 p-2"
+                onPress={() => {handleOptionSelect('delivery'); handleOpenMap(); }}
+              >
+                <Text className="text-fsemibold text-white">Delivery</Text>
+              </TouchableOpacity>
+            </View>
+
+            {tipoOperacion && (
+              <Text className="text-fsemibold text-black text-sm">
+                {tipoOperacion} seleccionada.
+              </Text>
+            )}
+
             <View style={styles.buttonContainer}>
               <Button color={'#ff0000'} title="Cancelar" onPress={() => setIsClienteModalVisible(false)} />
               <Button
@@ -280,6 +461,36 @@ const Home = () => {
           </View>
         </View>
       </Modal>
+
+      {/* ubicacion */}
+      <Modal
+        visible={isMapVisible}
+        animationType="slide"
+        onRequestClose={handleCloseMap}
+      >
+        <View style={{ flex: 1 }}>
+          {/* Map Section */}
+          <View style={{ flex: 3 }}>
+            <MapView
+              style={{ flex: 1 }}
+              onPress={(event) => setSelectedLocation(event.nativeEvent.coordinate)}
+              initialRegion={initialRegion}
+            >
+              {selectedLocation && (
+                <Marker coordinate={selectedLocation} title="Selected Location" />
+              )}
+            </MapView>
+          </View>
+          <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 16 }}>
+            <Button title="Obtener ubicación actual" onPress={getCurrentLocation} />
+            <View style={{ marginVertical: 4 }} />
+            <Button title="Confirmar" onPress={() => handleConfirmLocation(selectedLocation)} />
+            <View style={{ marginVertical: 4 }} />
+            <Button title="Cerrar" onPress={handleCloseMap} />
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };
@@ -342,11 +553,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    margin: 20,
+    margin: 45,
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
-    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 20,
@@ -358,6 +568,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginTop: 10,
+  },
+  categoriaOption: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  categoriaOptionText: { marginLeft: 10 },
+  icon: { marginRight: 10 },
+  categoriaButton: { backgroundColor: '#f3f4f6', padding: 10, borderRadius: 8 },
+  categoriaButtonText: { color: '#374151', fontWeight: 'bold' },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  optionButton: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  optionText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

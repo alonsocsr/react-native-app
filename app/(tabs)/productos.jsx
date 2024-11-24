@@ -200,7 +200,7 @@ const Productos = () => {
       <ModalView
         visible={visible}
         title="Crear Producto"
-        onDismiss={() => setVisible(false)}
+        onDismiss={() => { setVisible(false); getCategorias(); }}
         onSubmit={() => {
           if (idProducto !== 0) {
             editarProducto(idProducto, nombre, idCategoria, precioVenta, cantidadDisponible);
@@ -232,9 +232,10 @@ const Productos = () => {
           mode="outlined"
         />
         <TextInput
-          label="Imagen (nombre del archivo)"
+          label="Imagen URL"
           value={imagen}
           onChangeText={(text) => setImagen(text)}
+          placeholder='Ingresa el URL de la imagen'
           mode="outlined"
         />
         <TextInput
