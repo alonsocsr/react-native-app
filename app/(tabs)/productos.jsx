@@ -25,12 +25,22 @@ const Productos = () => {
   const API_URL = `http://${db_ip}:3000/productos`;
   const CATEGORIAS_URL = `http://${db_ip}:3000/categorias`;
 
+  const aplicarFiltro = (productos, query) => {
+    if (query.trim() === '') {
+      return productos;
+    }
+    return productos.filter(producto =>
+      producto.nombre.toLowerCase().includes(query.toLowerCase())
+    );
+  };
+
   const getProductos = async () => {
     setLoading(true);
     await fetch(API_URL)
       .then((response) => response.json())
       .then((response) => {
         setData(response);
+        setFilteredData(aplicarFiltro(response, searchQuery)); // Aplica el filtro a los datos obtenidos
         getCategorias();
       })
       .catch((e) => console.log(e));
@@ -81,6 +91,11 @@ const Productos = () => {
         actualizarProducto();
       })
       .catch((error) => console.error(error));
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setFilteredData(aplicarFiltro(data, query));
   };
 
   const actualizarProducto = () => {
@@ -175,7 +190,7 @@ const Productos = () => {
           style={[styles.input, { backgroundColor: '#fce7f3' }]}
           placeholder="Buscar producto por nombre"
           value={searchQuery}
-          onChangeText={(text) => buscadorFiltrado(text)}
+          onChangeText={handleSearch}
         />
       </View>
 
