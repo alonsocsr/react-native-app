@@ -74,4 +74,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ModalView
+export default ModalView;

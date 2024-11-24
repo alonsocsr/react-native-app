@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, View,Modal } from 'react-native';
 import { Surface, Title, TextInput } from 'react-native-paper';
 import ModalView from '../../components/ModalView';
 import ItemsProd from '../../components/ItemsProd';
-import { Picker } from '@react-native-picker/picker';
+import { Ionicons } from '@expo/vector-icons';
 import { db_ip } from '@env';
 
 const Productos = () => {
@@ -20,6 +20,8 @@ const Productos = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [imagen, setImagen] = useState('');
   const [cantidadDisponible, setCantidadDisponible] = useState(0);
+  const [isCategoriaModalVisible, setIsCategoriaModalVisible] = useState(false);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
 
   const API_URL = `http://${db_ip}:3000/productos`;
   const CATEGORIAS_URL = `http://${db_ip}:3000/categorias`;
@@ -83,16 +85,16 @@ const Productos = () => {
   };
 
   const actualizarProducto = () => {
-    getProductos();
     setVisible(false);
     setNombre('');
     setIdProducto(0);
     setPrecioVenta(0);
     setCantidadDisponible(0);
+    getProductos();
   };
 
-  const editarProducto = (idProducto, nombre, idCategoria, precioVenta, cantidadDisponible) => {
-    if (!nombre || !idCategoria || !precioVenta || cantidadDisponible == null) {
+  const editarProducto = (idProducto, nombre, idCategoria, precioVenta, imagen, cantidadDisponible) => {
+    if (!nombre || !idCategoria || !precioVenta || !imagen || cantidadDisponible == null) {
       alert('Todos los campos son obligatorios');
       console.error('Todos los campos son obligatorios');
       return;
@@ -104,6 +106,7 @@ const Productos = () => {
         "nombre": nombre,
         "idCategoria": idCategoria,
         "precioVenta": parseInt(precioVenta),
+        "imagen":imagen,
         "cantidadDisponible": parseInt(cantidadDisponible)
       })
     }).then((response) => response.json())
@@ -190,6 +193,7 @@ const Productos = () => {
             nombre={item.nombre}
             categoria={categorias.find(cat => cat.id === item.idCategoria)?.nombre}
             precioVenta={item.precioVenta}
+            imagen={item.imagen}
             cantidadDisponible={item.cantidadDisponible}
             onEdit={() => editar(item.id, item.nombre, item.idCategoria, item.precioVenta, item.imagen, item.cantidadDisponible)}
             onDelete={() => eliminarProducto(item.id)}
@@ -203,7 +207,7 @@ const Productos = () => {
         onDismiss={() => { setVisible(false); getCategorias(); }}
         onSubmit={() => {
           if (idProducto !== 0) {
-            editarProducto(idProducto, nombre, idCategoria, precioVenta, cantidadDisponible);
+            editarProducto(idProducto, nombre, idCategoria, precioVenta, imagen,cantidadDisponible);
           } else {
             agregarProducto(nombre, idCategoria, precioVenta, imagen, cantidadDisponible);
           }
@@ -216,14 +220,54 @@ const Productos = () => {
           onChangeText={(text) => setNombre(text)}
           mode="outlined"
         />
-        <Picker
-          selectedValue={idCategoria}
-          onValueChange={(itemValue) => setIdCategoria(itemValue)}
-        >
-          {categorias.map((cat) => (
-            <Picker.Item key={cat.id} label={cat.nombre} value={cat.id} />
-          ))}
-        </Picker>
+        <TouchableOpacity
+  onPress={() => setIsCategoriaModalVisible(true)}
+  style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}
+>
+  <Ionicons
+    name={categorias.find((cat) => cat.id === idCategoria)?.icono || 'apps'}
+    size={24}
+    style={{ marginRight: 10 }}
+  />
+  <Text>
+    {categorias.find((cat) => cat.id === idCategoria)?.nombre || 'Seleccionar Categoría'}
+  </Text>
+</TouchableOpacity>
+
+<Modal
+  visible={isCategoriaModalVisible}
+  animationType="slide"
+  transparent={true}
+  onRequestClose={() => setIsCategoriaModalVisible(false)}
+>
+  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <View style={{ margin: 20, backgroundColor: 'white', borderRadius: 10, padding: 20 }}>
+      <FlatList
+        data={categorias}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
+            onPress={() => {
+              setIdCategoria(item.id); // Selecciona la categoría
+              setIsCategoriaModalVisible(false); // Cierra el modal
+            }}
+          >
+            <Ionicons name={item.icono} size={24} style={{ marginRight: 10 }} />
+            <Text>{item.nombre}</Text>
+          </TouchableOpacity>
+        )}
+      />
+      <TouchableOpacity
+        onPress={() => setIsCategoriaModalVisible(false)}
+        style={{ marginTop: 20, alignSelf: 'center' }}
+      >
+        <Text style={{ color: 'blue' }}>Cerrar</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
         <TextInput
           label="Precio de Venta"
           value={precioVenta}

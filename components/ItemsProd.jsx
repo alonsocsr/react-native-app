@@ -9,29 +9,13 @@ const Button = ({ onPress, style, icon }) => (
   </TouchableOpacity>
 );
 
-export default function ItemsProd({ id, nombre, categoria, precioVenta, cantidadDisponible, onEdit, onDelete, db_ip }) {
-  const [imagen, setImagen] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`http://${db_ip}:3000/productos/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setImagen(data.imagen);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error al cargar el producto:', error);
-        setLoading(false);
-      });
-  }, [id, db_ip]);
-
+export default function ItemsProd({nombre, categoria, precioVenta, imagen,cantidadDisponible, onEdit, onDelete}) {
   return (
     <Card style={styles.item}>
       <View style={styles.rowView}>
         <View>
-          <Image
-            source={{ uri: imagen }}
+        <Image
+            source={{ uri:imagen }}
             style={styles.productImage}
           />
           <Text style={styles.nombre}>{nombre}</Text>
