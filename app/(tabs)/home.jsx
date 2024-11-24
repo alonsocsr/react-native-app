@@ -227,7 +227,7 @@ const Home = () => {
   const handleConfirmLocation = (location) => {
     setSelectedLocation(location);
     setIsMapVisible(false);
-    console.log("Location selected:", location); // Process the location as needed
+    console.log("Location selected:", location);
   };
 
   const finalizarOrden = async () => {

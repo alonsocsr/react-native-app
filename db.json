@@ -24,6 +24,11 @@
       "id": "6",
       "nombre": "Tecnologias",
       "icono": "cellular"
+    },
+    {
+      "id": "7",
+      "nombre": "Accesorios ",
+      "icono": "add-circle-outline"
     }
   ],
   "productos": [
@@ -32,7 +37,7 @@
       "idCategoria": "1",
       "precioVenta": 100000,
       "imagen": "https://acdn.mitiendanube.com/stores/002/535/145/products/tecla_productpage_classicnegra_01_hero_desktop-ee80d79518f953bd5a17161744404898-640-0.png",
-      "cantidadDisponible": 3,
+      "cantidadDisponible": 1,
       "id": "1"
     },
     {
@@ -49,7 +54,7 @@
       "idCategoria": "1",
       "precioVenta": 250000,
       "imagen": "https://candelascloset.es/9652-large_default/pantalon-largo-pons-pan-producto-basico.jpg",
-      "cantidadDisponible": 8
+      "cantidadDisponible": 6
     },
     {
       "id": "5",
@@ -73,7 +78,7 @@
       "idCategoria": "2",
       "precioVenta": 15000,
       "imagen": "https://www.superseis.com.py/images/thumbs/0244073_500.png",
-      "cantidadDisponible": 3
+      "cantidadDisponible": 2
     },
     {
       "id": "8",
@@ -85,11 +90,19 @@
     },
     {
       "id": "9",
-      "nombre": "Parlate jbl",
+      "nombre": "Parlante jbl",
       "idCategoria": "6",
       "precioVenta": 334000,
       "imagen": "https://www.gonzalezgimenez.com.py/storage/sku/jbl-parlantes-y-minicomponentes-jbl-go-4-rojo-1-1-1721663634.jpg",
       "cantidadDisponible": 5
+    },
+    {
+      "nombre": "Earbuds ",
+      "idCategoria": "6",
+      "precioVenta": 5000,
+      "imagen": "https://nissei.com/media/catalog/product/cache/24e3af3791642c18c52611620aeb2e21/l/a/lalala.jpg",
+      "cantidadDisponible": 3,
+      "id": "10"
     }
   ],
   "clientes": [
@@ -164,6 +177,18 @@
       "cedula": "4444444",
       "nombre": "gus",
       "apellido": "sosa"
+    },
+    {
+      "id": "13",
+      "cedula": "566788",
+      "nombre": "Jon",
+      "apellido": "Nieve"
+    },
+    {
+      "id": "14",
+      "cedula": "6777888",
+      "nombre": "Sansa",
+      "apellido": "Stark"
     }
   ],
   "ventas": [
@@ -209,6 +234,56 @@
         "longitude": -57.3930362
       },
       "total": 15000
+    },
+    {
+      "id": "23",
+      "idCliente": "13",
+      "fecha": "2024-11-24",
+      "detalle": [
+        {
+          "idProducto": "4",
+          "cantidad": 1,
+          "precio": 250000
+        },
+        {
+          "idProducto": "1",
+          "cantidad": 1,
+          "precio": 100000
+        },
+        {
+          "idProducto": "7",
+          "cantidad": 1,
+          "precio": 15000
+        }
+      ],
+      "tipoOperacion": "delivery",
+      "direccionEntrega": "direccionEntrega",
+      "ubicacionMapa": {
+        "latitude": -25.31038332271128,
+        "longitude": -57.49450542032719
+      },
+      "total": 365000
+    },
+    {
+      "id": "24",
+      "idCliente": "14",
+      "fecha": "2024-11-24",
+      "detalle": [
+        {
+          "idProducto": "1",
+          "cantidad": 1,
+          "precio": 100000
+        },
+        {
+          "idProducto": "4",
+          "cantidad": 1,
+          "precio": 250000
+        }
+      ],
+      "tipoOperacion": "pickup",
+      "direccionEntrega": "direccionEntrega",
+      "ubicacionMapa": null,
+      "total": 350000
     }
   ]
 }
