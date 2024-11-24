@@ -29,7 +29,6 @@ const Productos = () => {
     await fetch(API_URL)
       .then((response) => response.json())
       .then((response) => {
-        console.log(response)
         setData(response);
         setFilteredData(response);
       })
@@ -187,10 +186,10 @@ const Productos = () => {
         onRefresh={getProductos}
         renderItem={({ item }) => (
           <ItemsProd
+            id={item.id}
             nombre={item.nombre}
             categoria={categorias.find(cat => cat.id === item.idCategoria)?.nombre}
             precioVenta={item.precioVenta}
-            imagen={item.imagen}
             cantidadDisponible={item.cantidadDisponible}
             onEdit={() => editar(item.id, item.nombre, item.idCategoria, item.precioVenta, item.imagen, item.cantidadDisponible)}
             onDelete={() => eliminarProducto(item.id)}
