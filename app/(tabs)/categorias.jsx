@@ -19,7 +19,7 @@ const Categorias = () => {
   const [iconModalVisible, setIconModalVisible] = useState(false);
 
   const API_URL = `http://${db_ip}:3000/categorias`;
-  const iconOptions = Object.keys(Ionicons.glyphMap).slice(0,100);
+  const iconOptions = Object.keys(Ionicons.glyphMap).slice(0, 100);
 
   const getCategorias = async () => {
     setLoading(true);
@@ -92,6 +92,7 @@ const Categorias = () => {
       .then((response) => response.json())
       .then(() => {
         actualizarCategoria();
+        getCategorias();
       })
       .catch(error => {
         console.error(error);
@@ -137,7 +138,7 @@ const Categorias = () => {
   }, []);
   const handleIconSelect = (iconName) => {
     setSelectedIcon(iconName);
-    setIconModalVisible(false); 
+    setIconModalVisible(false);
   };
 
   const renderIconOption = ({ item }) => (
@@ -191,13 +192,14 @@ const Categorias = () => {
       <ModalView
         visible={visible}
         title="Crear Categoría"
-        onDismiss={() => setVisible(false)}
+        onDismiss={() => { setVisible(false); getCategorias(); }}
         onSubmit={() => {
           if (idCategoria && nombre) {
             editarCategoria(idCategoria, nombre, selectedIcon);
           } else {
             agregarCategoria(nombre, selectedIcon);
           }
+          getCategorias();
         }}
         cancelable
       >
@@ -206,35 +208,35 @@ const Categorias = () => {
           value={nombre}
           onChangeText={(text) => setNombre(text)}
           mode="outlined"
-          style= {{padding:10}}
+          style={{ padding: 10 }}
         />
 
-<TouchableOpacity
-        style={styles.selectIconButton}
-        onPress={() => setIconModalVisible(true)}
-      >
-        <Text style={styles.buttonText}>
-          {selectedIcon ? `Icono Seleccionado: ${selectedIcon}` : 'Seleccionar Icono'}
-        </Text>
-      </TouchableOpacity>
-      <Modal
-        visible={iconModalVisible}
-        animationType="slide"
-        onRequestClose={() => setIconModalVisible(false)}
-      >
-        <View style={styles.modalContent}>
-          <FlatList
-            data={iconOptions}
-            keyExtractor={(item) => item}
-            renderItem={renderIconOption}
-            numColumns={4} 
-          />
-         
-          <TouchableOpacity onPress={() => setIconModalVisible(false)} style={styles.closeButton}>
-            <Text style={styles.buttonText}>Cerrar</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+        <TouchableOpacity
+          style={styles.selectIconButton}
+          onPress={() => setIconModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>
+            {selectedIcon ? `Icono Seleccionado: ${selectedIcon}` : 'Seleccionar Icono'}
+          </Text>
+        </TouchableOpacity>
+        <Modal
+          visible={iconModalVisible}
+          animationType="slide"
+          onRequestClose={() => setIconModalVisible(false)}
+        >
+          <View style={styles.modalContent}>
+            <FlatList
+              data={iconOptions}
+              keyExtractor={(item) => item}
+              renderItem={renderIconOption}
+              numColumns={4}
+            />
+
+            <TouchableOpacity onPress={() => setIconModalVisible(false)} style={styles.closeButton}>
+              <Text style={styles.buttonText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </ModalView>
 
       <Modal
@@ -301,7 +303,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: 'black',
-    paddingTop:10
+    paddingTop: 10
   },
   modalContent: {
     flex: 1,
@@ -314,7 +316,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
-    paddingTop:5
+    paddingTop: 5
   },
   iconName: {
     marginTop: 5,

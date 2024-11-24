@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, View,Modal } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, SafeAreaView, View, Modal } from 'react-native';
 import { Surface, Title, TextInput } from 'react-native-paper';
 import ModalView from '../../components/ModalView';
 import ItemsProd from '../../components/ItemsProd';
@@ -21,7 +21,6 @@ const Productos = () => {
   const [imagen, setImagen] = useState('');
   const [cantidadDisponible, setCantidadDisponible] = useState(0);
   const [isCategoriaModalVisible, setIsCategoriaModalVisible] = useState(false);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
 
   const API_URL = `http://${db_ip}:3000/productos`;
   const CATEGORIAS_URL = `http://${db_ip}:3000/categorias`;
@@ -32,7 +31,7 @@ const Productos = () => {
       .then((response) => response.json())
       .then((response) => {
         setData(response);
-        setFilteredData(response);
+        getCategorias();
       })
       .catch((e) => console.log(e));
     setLoading(false);
@@ -106,7 +105,7 @@ const Productos = () => {
         "nombre": nombre,
         "idCategoria": idCategoria,
         "precioVenta": parseInt(precioVenta),
-        "imagen":imagen,
+        "imagen": imagen,
         "cantidadDisponible": parseInt(cantidadDisponible)
       })
     }).then((response) => response.json())
@@ -207,7 +206,7 @@ const Productos = () => {
         onDismiss={() => { setVisible(false); getCategorias(); }}
         onSubmit={() => {
           if (idProducto !== 0) {
-            editarProducto(idProducto, nombre, idCategoria, precioVenta, imagen,cantidadDisponible);
+            editarProducto(idProducto, nombre, idCategoria, precioVenta, imagen, cantidadDisponible);
           } else {
             agregarProducto(nombre, idCategoria, precioVenta, imagen, cantidadDisponible);
           }
@@ -221,52 +220,52 @@ const Productos = () => {
           mode="outlined"
         />
         <TouchableOpacity
-  onPress={() => setIsCategoriaModalVisible(true)}
-  style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}
->
-  <Ionicons
-    name={categorias.find((cat) => cat.id === idCategoria)?.icono || 'apps'}
-    size={24}
-    style={{ marginRight: 10 }}
-  />
-  <Text>
-    {categorias.find((cat) => cat.id === idCategoria)?.nombre || 'Seleccionar Categoría'}
-  </Text>
-</TouchableOpacity>
+          onPress={() => setIsCategoriaModalVisible(true)}
+          style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}
+        >
+          <Ionicons
+            name={categorias.find((cat) => cat.id === idCategoria)?.icono || 'apps'}
+            size={24}
+            style={{ marginRight: 10 }}
+          />
+          <Text>
+            {categorias.find((cat) => cat.id === idCategoria)?.nombre || 'Seleccionar Categoría'}
+          </Text>
+        </TouchableOpacity>
 
-<Modal
-  visible={isCategoriaModalVisible}
-  animationType="slide"
-  transparent={true}
-  onRequestClose={() => setIsCategoriaModalVisible(false)}
->
-  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-    <View style={{ margin: 20, backgroundColor: 'white', borderRadius: 10, padding: 20 }}>
-      <FlatList
-        data={categorias}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
-            onPress={() => {
-              setIdCategoria(item.id); // Selecciona la categoría
-              setIsCategoriaModalVisible(false); // Cierra el modal
-            }}
-          >
-            <Ionicons name={item.icono} size={24} style={{ marginRight: 10 }} />
-            <Text>{item.nombre}</Text>
-          </TouchableOpacity>
-        )}
-      />
-      <TouchableOpacity
-        onPress={() => setIsCategoriaModalVisible(false)}
-        style={{ marginTop: 20, alignSelf: 'center' }}
-      >
-        <Text style={{ color: 'blue' }}>Cerrar</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+        <Modal
+          visible={isCategoriaModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setIsCategoriaModalVisible(false)}
+        >
+          <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <View style={{ margin: 20, backgroundColor: 'white', borderRadius: 10, padding: 20 }}>
+              <FlatList
+                data={categorias}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
+                    onPress={() => {
+                      setIdCategoria(item.id); // Selecciona la categoría
+                      setIsCategoriaModalVisible(false); // Cierra el modal
+                    }}
+                  >
+                    <Ionicons name={item.icono} size={24} style={{ marginRight: 10 }} />
+                    <Text>{item.nombre}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+              <TouchableOpacity
+                onPress={() => setIsCategoriaModalVisible(false)}
+                style={{ marginTop: 20, alignSelf: 'center' }}
+              >
+                <Text style={{ color: 'blue' }}>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
         <TextInput
           label="Precio de Venta"
