@@ -12,14 +12,14 @@ const Categorias = () => {
   const [visible, setVisible] = useState(false);
   const [nombre, setNombre] = useState('');
   const [idCategoria, setIdCategoria] = useState(0);
-  const [selectedIcon, setSelectedIcon] = useState('');
   const [loading, setLoading] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedIcon, setSelectedIcon] = useState(null);
   const [iconModalVisible, setIconModalVisible] = useState(false);
 
   const API_URL = `http://${db_ip}:3000/categorias`;
-  const iconOptions = Object.keys(Ionicons.glyphMap);
+  const iconOptions = Object.keys(Ionicons.glyphMap).slice(0,100);
 
   const getCategorias = async () => {
     setLoading(true);
@@ -135,17 +135,18 @@ const Categorias = () => {
   useEffect(() => {
     getCategorias();
   }, []);
+  const handleIconSelect = (iconName) => {
+    setSelectedIcon(iconName);
+    setIconModalVisible(false); 
+  };
 
   const renderIconOption = ({ item }) => (
     <TouchableOpacity
-      style={styles.iconOption}
-      onPress={() => {
-        setSelectedIcon(item);
-        setIconModalVisible(false);
-      }}
+      style={styles.iconButton}
+      onPress={() => handleIconSelect(item)}
     >
-      <Ionicons name={item} size={24} color="black" />
-      <Text style={styles.iconText}>{item}</Text>
+      <Ionicons name={item} size={30} color="black" />
+      <Text style={styles.iconName}>{item}</Text>
     </TouchableOpacity>
   );
 
@@ -205,16 +206,35 @@ const Categorias = () => {
           value={nombre}
           onChangeText={(text) => setNombre(text)}
           mode="outlined"
+          style= {{padding:10}}
         />
 
-        <TouchableOpacity
-          style={styles.selectIconButton}
-          onPress={() => setIconModalVisible(true)}
-        >
-          <Text style={styles.buttonText}>
-            {selectedIcon ? `Icono Seleccionado: ${selectedIcon}` : 'Seleccionar Icono'}
-          </Text>
-        </TouchableOpacity>
+<TouchableOpacity
+        style={styles.selectIconButton}
+        onPress={() => setIconModalVisible(true)}
+      >
+        <Text style={styles.buttonText}>
+          {selectedIcon ? `Icono Seleccionado: ${selectedIcon}` : 'Seleccionar Icono'}
+        </Text>
+      </TouchableOpacity>
+      <Modal
+        visible={iconModalVisible}
+        animationType="slide"
+        onRequestClose={() => setIconModalVisible(false)}
+      >
+        <View style={styles.modalContent}>
+          <FlatList
+            data={iconOptions}
+            keyExtractor={(item) => item}
+            renderItem={renderIconOption}
+            numColumns={4} 
+          />
+         
+          <TouchableOpacity onPress={() => setIconModalVisible(false)} style={styles.closeButton}>
+            <Text style={styles.buttonText}>Cerrar</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       </ModalView>
 
       <Modal
@@ -227,7 +247,7 @@ const Categorias = () => {
             data={iconOptions}
             keyExtractor={(item) => item}
             renderItem={renderIconOption}
-            numColumns={4}
+            numColumns={3}
           />
         </View>
       </Modal>
@@ -273,19 +293,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9fafb',
     marginBottom: 8,
   },
+  selectIconButton: {
+    padding: 10,
+    backgroundColor: '#DDDDDD',
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: 'black',
+    paddingTop:10
+  },
   modalContent: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
     padding: 20,
-    backgroundColor: '#fff',
   },
-  iconOption: {
-    flex: 1,
+  iconButton: {
+    justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
+    paddingTop:5
   },
-  iconText: {
+  iconName: {
+    marginTop: 5,
     fontSize: 12,
-    textAlign: 'center',
+  },
+  closeButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: '#DDDDDD',
+    borderRadius: 5,
   },
 });
 

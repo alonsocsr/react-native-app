@@ -1,8 +1,7 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { Card } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
-
 
 const Button = ({ onPress, style, icon }) => (
   <TouchableOpacity style={style} onPress={onPress}>
@@ -10,25 +9,42 @@ const Button = ({ onPress, style, icon }) => (
   </TouchableOpacity>
 );
 
-export default function ItemsProd({ nombre, categoria, precioVenta, imagen, cantidadDisponible, onEdit, onDelete }) {
+export default function ItemsProd({ id, nombre, categoria, precioVenta, cantidadDisponible, onEdit, onDelete, db_ip }) {
+  const [imagen, setImagen] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`http://${db_ip}:3000/productos/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setImagen(data.imagen);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error al cargar el producto:', error);
+        setLoading(false);
+      });
+  }, [id, db_ip]);
+
   return (
     <Card style={styles.item}>
       <View style={styles.rowView}>
         <View>
-        <Image
-  source={require(`../assets/images/pexels-bernyce-hollingworth-916019-2702805.jpg`)} 
-  style={styles.productImage}
-/>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Image
+              source={{ uri: imagen }} 
+              style={styles.productImage}
+            />
+          )}
           <Text style={styles.nombre}>{nombre}</Text>
           <Text style={styles.categoria}>Categoria: {categoria}</Text>
           <Text style={styles.precio}>Precio de venta: {precioVenta} GS</Text>
           <Text style={styles.cantidad}>Cantidad Disponible: {cantidadDisponible}</Text>
         </View>
         <View style={styles.rowView}>
-          <Button
-            onPress={onEdit}
-            icon="edit"
-            style={{ marginHorizontal: 16 }} />
+          <Button onPress={onEdit} icon="edit" style={{ marginHorizontal: 16 }} />
           <Button onPress={onDelete} icon="trash-2" />
         </View>
       </View>
