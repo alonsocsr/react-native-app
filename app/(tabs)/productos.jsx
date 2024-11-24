@@ -233,9 +233,10 @@ const Productos = () => {
           mode="outlined"
         />
         <TextInput
-          label="Imagen (nombre del archivo)"
+          label="Imagen URL"
           value={imagen}
           onChangeText={(text) => setImagen(text)}
+          placeholder='Ingresa el URL de la imagen'
           mode="outlined"
         />
         <TextInput

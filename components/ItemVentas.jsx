@@ -7,7 +7,7 @@ export default function ItemVentas({ nombre, categoria, precioVenta, imagen, onA
     <Card style={styles.item}>
       <View style={styles.rowView}>
         <Image
-        source={require('../assets/images/pexels-bernyce-hollingworth-916019-2702805.jpg')} 
+        source={{ uri: imagen}} 
         style={styles.productImage}
 />
         <View style={styles.details}>

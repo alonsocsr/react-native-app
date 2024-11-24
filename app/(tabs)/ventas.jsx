@@ -290,16 +290,16 @@ const Ventas = () => {
                 <MapView
                   style={{ flex: 1 }}
                   initialRegion={{
-                    latitude: ventaSeleccionada.ubicacionMapa.latitud,
-                    longitude: ventaSeleccionada.ubicacionMapa.longitud,
+                    latitude: ventaSeleccionada.ubicacionMapa.latitude,
+                    longitude: ventaSeleccionada.ubicacionMapa.longitude,
                     latitudeDelta: 0.01,
                     longitudeDelta: 0.01,
                   }}
                 >
                   <Marker
                     coordinate={{
-                      latitude: ventaSeleccionada.ubicacionMapa.latitud,
-                      longitude: ventaSeleccionada.ubicacionMapa.longitud,
+                      latitude: ventaSeleccionada.ubicacionMapa.latitude,
+                      longitude: ventaSeleccionada.ubicacionMapa.longitude,
                     }}
                     title="Ubicación de entrega"
                   />
