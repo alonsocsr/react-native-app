@@ -57,7 +57,6 @@ const Home = () => {
     }
   };
 
-  const [imagen, setImagen] = useState('');
   useEffect(() => {
     getProductos();
     getCategorias();
@@ -393,10 +392,10 @@ const Home = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Información del Cliente</Text>
+            <Text className="font-fsemibold text-xl text-gray-900 mb-2">Información del Cliente</Text>
             <View style={styles.row}>
               <TextInput
-                className="font-fregular"
+                className="font-fregular w-[80%]"
                 style={styles.input}
                 placeholder="Cédula"
                 value={cliente.cedula}
@@ -410,7 +409,7 @@ const Home = () => {
               </TouchableOpacity>
             </View>
             <TextInput
-              className="font-fregular"
+              className="font-fregular w-[80%]"
               style={styles.input}
               placeholder="Nombre"
               value={cliente.nombre}
@@ -418,25 +417,36 @@ const Home = () => {
             />
             <TextInput
               style={styles.input}
-              className="font-fregular"
+              className="font-fregular w-[80%]"
               placeholder="Apellido"
               value={cliente.apellido}
               onChangeText={(text) => setCliente({ ...cliente, apellido: text })}
             />
             {/* seleccionar orden */}
-             <Text className="font-pregular text-gray-700 text-lg">Selecciona el tipo de orden</Text>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => handleOptionSelect('pickup')}
-            >
-              <Text style={styles.optionText}>Pickup</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => {handleOptionSelect('delivery'); handleOpenMap(); }}
-            >
-              <Text style={styles.optionText}>Delivery</Text>
-            </TouchableOpacity>
+             <Text className="font-fsemibold text-gray-900 text-lg mb-1">Selecciona el tipo de orden</Text>
+            
+            <View className="flex flex-row gap-4 items-start justify-start mb-2">
+
+              <TouchableOpacity
+                className="rounded-lg bg-pink-500 p-2"
+                onPress={() => handleOptionSelect('pickup')}
+              >
+                <Text className="text-psemibold text-white">Pickup</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="rounded-lg bg-pink-500 p-2"
+                onPress={() => {handleOptionSelect('delivery'); handleOpenMap(); }}
+              >
+                <Text className="text-fsemibold text-white">Delivery</Text>
+              </TouchableOpacity>
+            </View>
+
+            {tipoOperacion && (
+              <Text className="text-fsemibold text-black text-sm">
+                {tipoOperacion} seleccionada.
+              </Text>
+            )}
+
             <View style={styles.buttonContainer}>
               <Button color={'#ff0000'} title="Cancelar" onPress={() => setIsClienteModalVisible(false)} />
               <Button
@@ -459,20 +469,23 @@ const Home = () => {
         onRequestClose={handleCloseMap}
       >
         <View style={{ flex: 1 }}>
-          <MapView
-            style={{ flex: 1 }}
-            onPress={(event) => setSelectedLocation(event.nativeEvent.coordinate)}
-            initialRegion={initialRegion}
-          >
-            {selectedLocation && (
-              <Marker coordinate={selectedLocation} title="Selected Location" />
-            )}
-          </MapView>
-          <View 
-            style={{ flex: 1 }}
-          >
+          {/* Map Section */}
+          <View style={{ flex: 3 }}>
+            <MapView
+              style={{ flex: 1 }}
+              onPress={(event) => setSelectedLocation(event.nativeEvent.coordinate)}
+              initialRegion={initialRegion}
+            >
+              {selectedLocation && (
+                <Marker coordinate={selectedLocation} title="Selected Location" />
+              )}
+            </MapView>
+          </View>
+          <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 16 }}>
             <Button title="Obtener ubicación actual" onPress={getCurrentLocation} />
+            <View style={{ marginVertical: 4 }} />
             <Button title="Confirmar" onPress={() => handleConfirmLocation(selectedLocation)} />
+            <View style={{ marginVertical: 4 }} />
             <Button title="Cerrar" onPress={handleCloseMap} />
           </View>
         </View>
@@ -540,11 +553,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    margin: 20,
+    margin: 45,
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
-    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 20,

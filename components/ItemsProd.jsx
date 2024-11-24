@@ -15,10 +15,10 @@ export default function ItemsProd({ nombre, categoria, precioVenta, imagen, cant
     <Card style={styles.item}>
       <View style={styles.rowView}>
         <View>
-        <Image
-  source={require(`../assets/images/pexels-bernyce-hollingworth-916019-2702805.jpg`)} 
-  style={styles.productImage}
-/>
+          <Image
+            source={{ uri: imagen }}
+            style={styles.productImage}
+          />
           <Text style={styles.nombre}>{nombre}</Text>
           <Text style={styles.categoria}>Categoria: {categoria}</Text>
           <Text style={styles.precio}>Precio de venta: {precioVenta} GS</Text>
