@@ -255,6 +255,7 @@ const Ventas = () => {
             setFiltroFechaHasta(null);
             setFiltroCliente(null);
             setNombre(null);
+            setApellido(null);
             setCedula(null);
             setFiltroTipoVenta(null);
             const data = await getVentasFiltrado(null, null, null, null);
